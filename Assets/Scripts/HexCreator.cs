@@ -9,6 +9,8 @@ public class HexCreator : MonoBehaviour
 
     public MeshFilter meshFilter;
     public MeshCollider collider;
+
+    public GameObject highlight;
     Mesh mesh;
     void Start()
     {
@@ -39,6 +41,9 @@ public class HexCreator : MonoBehaviour
                 }
                 CreateHex(ref vertexes, ref vertices, ref triangles,ref colors, offset, Util.color[map.types[j+i*map.height]], map.elevation[j + i * map.width]);
                 hexes[i, j] = new Hex(j, i,map.types[j + i*map.height], map.elevation[j+ i * map.width]);
+                var sprite = Instantiate(highlight);
+                sprite.transform.position = offset + new Vector3(0, 0.25f, 0);
+                MapController.sprites[j, i] = sprite.GetComponent<SpriteRenderer>();
             }
         }
 

@@ -13,6 +13,8 @@ public static class PathFinding
         usedHexes.Add(startHex, start);
         queue.Add(start);
 
+        MapController.sprites[startHex.x, startHex.z].color = Color.blue;
+
         while(queue.Count > 0)
         {
             HexPath hex = queue[queue.Count - 1];
@@ -57,6 +59,7 @@ public static class PathFinding
                 HexPath neighbourPath = new HexPath(hex.to, neighbour, distance);
                 queue.Add(neighbourPath);
                 movableHexes.Add(neighbourPath);
+                MapController.sprites[neighbour.x, neighbour.z].color = Color.green;
                 usedHexes.Add(neighbour, neighbourPath);
             }
         }

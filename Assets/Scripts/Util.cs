@@ -40,10 +40,10 @@ public static class Util
         int newX = x + (isOdd ? neiughbourHexOdd[direction].x : neiughbourHexEven[direction].x);
         int newY = y + (isOdd ? neiughbourHexOdd[direction].y : neiughbourHexEven[direction].y);
 
-        if (newX >= 0 && newX< MapController.width &&
-            newY >= 0 && newY < MapController.height)
+        if (newX >= 0 && newX< MapController.height &&
+            newY >= 0 && newY < MapController.width)
         {
-            hex = MapController.hexes[newY,newX];
+            hex = MapController.hexes[newX,newY];
             return true;
         }
 

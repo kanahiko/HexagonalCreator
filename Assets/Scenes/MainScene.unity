@@ -488,6 +488,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   meshFilter: {fileID: 1190709982}
   collider: {fileID: 1322972110}
+  highlight: {fileID: 3026935096406950463, guid: b772c1c976f94f94f9589f69270f3eeb, type: 3}
 --- !u!4 &1537960583
 Transform:
   m_ObjectHideFlags: 0

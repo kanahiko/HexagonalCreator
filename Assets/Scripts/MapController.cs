@@ -11,11 +11,13 @@ public class MapController : MonoBehaviour
     public static int height;
 
     public static Hex[,] hexes;
+    public static SpriteRenderer[,] sprites;
 
     void Start()
     {
         width = currentMap.width;
         height = currentMap.height;
+        sprites = new SpriteRenderer[height,width];
         hexes = creator.CreateMap(currentMap);
 
         Hex hex = hexes[height / 2, width / 2];
