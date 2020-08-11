@@ -21,28 +21,33 @@ public class GameController : MonoBehaviour
 
     List<FortObject> highlightableForts = new List<FortObject>();
     List<UnitObject> highlightableUnits = new List<UnitObject>();
+    
     public void StartGame(MapData map)
     {
         ClearMap();
-        CreateForts(map);
+        redForts = MapCreator.redForts;
+        blueForts = MapCreator.blueForts;
         currentTurn = Side.Blue;
         currentPhase = PhaseType.InitialDisclosure;
+        
+        Vector2Int coords = new Vector2Int(2,3);
+        AddUnit(MapController.unitTypes[0],coords);
+        UnitController.SelectUnit(coords);
+        UnitController.SelectUnit(new Vector2Int(3,2));
+        
     }
 
-    void CreateForts(MapData map)
+    public void AddUnit(Unit unit, Vector2Int coordinates)
     {
-        int count = map.countries.Count / 2;
-
-        foreach(var fort in map.countries)
+        UnitObject newUnit = UnitController.CreateUnit(unit, coordinates);
+        newUnit.side = currentTurn;
+        if (currentTurn == Side.Blue)
         {
-            if (Random.Range(0,100)%2 == 0)
-            {
-                GameObject newFort = new GameObject("BlueFort");
-                FortObject fortObject = newFort.AddComponent<FortObject>();
-                fortObject.InitializeFort(fort, Side.Blue);
-                blueForts.Add(fortObject);
-                count--;
-            }
+            blueUnits.Add(newUnit);
+        }
+        else
+        {
+            redUnits.Add(newUnit);
         }
     }
 

@@ -129,5 +129,31 @@ public static class Util
         }
         return 999;
     }
+
+    public static Vector2Int FindCoordinates(int index)
+    {
+        int column = index % MapController.width;
+        int row = index / MapController.width;
+        
+        return new Vector2Int(column, row);
+    }
+    public static Vector3 GetPosition(Vector2Int coordinates)
+    {
+        return GetPosition(coordinates.x, coordinates.y);
+    }
+    
+    public static Vector3 GetPosition(int x, int y)
+    {
+        Vector3  position = new Vector3();
+        position.z = y * (radius + halfRadius);
+        position.x = x * smallRadius * 2 + (y % 2 == 0 ? 0 : smallRadius);
+        return position;
+    }
+    
+    public static Vector3 GetPosition(int index)
+    {
+        Vector2Int coordinates = FindCoordinates(index);
+        return GetPosition(coordinates.x, coordinates.y);
+    }
 }
 

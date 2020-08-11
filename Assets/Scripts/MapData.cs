@@ -18,6 +18,7 @@ public class MapData : ScriptableObject
     public List<Country> countries;
 }
 
+[Serializable]
 public class Hex
 {
     //public Vector3Int coordinates;
@@ -29,6 +30,9 @@ public class Hex
     public TileType type;
 
     public int elevation;
+
+    public UnitObject unit;
+    public FortObject fort;
 
     public Hex(int x,  int y, TileType type, int elevation)
     {

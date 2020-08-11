@@ -5,6 +5,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName ="unit", menuName ="Unit")]
 public class Unit : ScriptableObject
 {
+    public string name;
+    
     public int hitPoints;
     public int movement;
     public int damage;

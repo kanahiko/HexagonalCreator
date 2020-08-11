@@ -517,6 +517,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentMap: {fileID: 11400000, guid: 513acdd1b7e57a346bab4f492a5d0a97, type: 2}
   creator: {fileID: 1537960582}
+  gameController: {fileID: 2056302103}
+  fortPrefabs:
+  - {fileID: 11400000, guid: ad1de67c6795b0546b71f908ed558e8b, type: 2}
+  - {fileID: 11400000, guid: ab2428892384dd241bc5ffdf66414dd4, type: 2}
+  - {fileID: 11400000, guid: 0c2c225c067b27049b20b465f37a6183, type: 2}
+  unitPrefabs:
+  - {fileID: 11400000, guid: e5f8b11c77e72f841a48d7273237b578, type: 2}
 --- !u!1 &1857420800
 GameObject:
   m_ObjectHideFlags: 0
@@ -601,6 +608,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2056302101}
   - component: {fileID: 2056302102}
+  - component: {fileID: 2056302103}
   m_Layer: 0
   m_Name: Controller
   m_TagString: Untagged
@@ -636,6 +644,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mainCamera: {fileID: 0}
   creator: {fileID: 1537960582}
+--- !u!114 &2056302103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2056302100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b63e6ee16d011e4a925c5e1243c2e54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentTurn: 0
+  currentPhase: 0
+  redUnits: []
+  blueUnits: []
+  redForts: []
+  blueForts: []
+  redTreasury: 0
+  blueTreasury: 0
 --- !u!1 &2125252238
 GameObject:
   m_ObjectHideFlags: 0

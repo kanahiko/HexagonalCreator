@@ -14,7 +14,7 @@ public static class PathFinding
         usedHexes.Add(startHex, start);
         queue.Enqueue(start);
 
-        MapController.sprites[startHex.y, startHex.x].color = Color.blue;
+        MapController.sprites[startHex.x, startHex.y].color = Color.blue;
 
         while(queue.Count > 0)
         {

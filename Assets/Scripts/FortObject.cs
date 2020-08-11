@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class FortObject : MonoBehaviour
 {
+    public Hex hex;
+    
     public int capacity;
     public Side side;
     public Side initialSide;

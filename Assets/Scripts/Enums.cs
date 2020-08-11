@@ -15,7 +15,7 @@ public enum Side
 
 public enum UnitType
 {
-    Tank,MobileArtillery,HAV,MissilePlatform,LandTransports
+   LAV, Tank,MobileArtillery,HAV,MissilePlatform,LandTransports
 }
 
 public enum FortType
