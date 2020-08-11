@@ -13,14 +13,16 @@ public class MapController : MonoBehaviour
     public static Hex[,] hexes;
     public static SpriteRenderer[,] sprites;
 
+    public static List<Fort> fortTypes;
+
     void Start()
     {
         width = currentMap.width;
         height = currentMap.height;
-        sprites = new SpriteRenderer[height,width];
+        sprites = new SpriteRenderer[width,height];
         hexes = creator.CreateMap(currentMap);
 
-        Hex hex = hexes[height / 2, width / 2];
-        PathFinding.GetMovableHexes(hex, 5);
+        Hex hex = hexes[width / 2, height / 2];
+        Dictionary<Hex, HexPath>  movableHexes = PathFinding.GetMovableHexes(hex, 5);
     }
 }

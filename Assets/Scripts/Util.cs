@@ -25,23 +25,32 @@ public static class Util
 
     public static List<Vector2Int> neiughbourHexOdd = new List<Vector2Int>
     {
-        new Vector2Int(0,-1),new Vector2Int(1,0),new Vector2Int(0,-1),
-        new Vector2Int(-1,-1),new Vector2Int(-1,0),new Vector2Int(-1,1),
-    };
-
-    public static List<Vector2Int> neiughbourHexEven = new List<Vector2Int>
-    {
         new Vector2Int(1,1),new Vector2Int(1,0),new Vector2Int(1,-1),
         new Vector2Int(0,-1),new Vector2Int(-1,0),new Vector2Int(0,1),
     };
 
+    public static List<Vector2Int> neiughbourHexEven = new List<Vector2Int>
+    {
+        new Vector2Int(0,1),new Vector2Int(1,0),new Vector2Int(0,-1),
+        new Vector2Int(-1,-1),new Vector2Int(-1,0),new Vector2Int(-1,1),
+    };
+    public static Hex HexExist(int x, int y)
+    {
+        if (y >= 0 && y < MapController.height &&
+            x >= 0 && x < MapController.width)
+        {
+            return MapController.hexes[x, y];
+        }
+
+        return null;
+    }
     public static bool HexExist(bool isOdd, int x, int y, int direction, out Hex hex)
     {
         int newX = x + (isOdd ? neiughbourHexOdd[direction].x : neiughbourHexEven[direction].x);
         int newY = y + (isOdd ? neiughbourHexOdd[direction].y : neiughbourHexEven[direction].y);
 
-        if (newX >= 0 && newX< MapController.height &&
-            newY >= 0 && newY < MapController.width)
+        if (newX >= 0 && newX< MapController.width &&
+            newY >= 0 && newY < MapController.height)
         {
             hex = MapController.hexes[newX,newY];
             return true;
@@ -85,6 +94,13 @@ public static class Util
         }
 
         return new Vector2Int(iX, iZ);
+    }
+
+    public static Vector2Int CubeToOffset(Vector2Int cube)
+    {
+        int column = cube.x + (cube.y - (cube.y & 1)) / 2;
+        int row = cube.y;
+        return new Vector2Int(column, row);
     }
 
     public static Vector3Int GetCubicCoordinates(int x, int z)

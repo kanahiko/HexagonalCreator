@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class Controller : MonoBehaviour
 {
     public Camera mainCamera;
+    public HexCreator creator;
     Controls controls;
     Vector2 movement;
 
@@ -38,8 +39,23 @@ public class Controller : MonoBehaviour
         if (Physics.Raycast(mainCamera.ScreenPointToRay(mousePos), out hit, 100))
         {
             Vector3 position = hit.point;
+            Vector2Int hexCoordinates = Util.GetPositionToCoordinates(position);
+            Vector2Int offsetCoordinates = Util.CubeToOffset(hexCoordinates);
+            Hex hex = Util.HexExist(offsetCoordinates.x, offsetCoordinates.y);
+            switch (hex.type)
+            {
+                case TileType.Water:
+                    hex.type = TileType.Sand;
+                    break;
+                case TileType.Sand:
+                    hex.type = TileType.Land;
+                    break;
+                case TileType.Land:
+                    hex.type = TileType.Water;
+                    break;
+            }
 
-            Debug.Log(Util.GetPositionToCoordinates(position));
+            creator.ChangeHex(hex.y + hex.x*6, hex.type);
         }
 
     }

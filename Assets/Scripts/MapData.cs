@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 [CreateAssetMenu(fileName ="Map", menuName ="Map")]
@@ -12,38 +14,38 @@ public class MapData : ScriptableObject
     public TileType[] types;
 
     public int[] elevation;
+
+    public List<Country> countries;
 }
 
 public class Hex
 {
-    public Vector3Int coordinates;
+    //public Vector3Int coordinates;
 
     public int x;
     public int y;
-    public int z;
+   //public int z;
 
     public TileType type;
 
     public int elevation;
 
-    public Hex(int x,  int z, TileType type, int elevation)
+    public Hex(int x,  int y, TileType type, int elevation)
     {
         this.x = x;
-        this.y = -x-z;
-        this.z = z;
-        coordinates = new Vector3Int(x, y, z);
+        this.y = y;
+        //coordinates = new Vector3Int(x, y, z);
         this.type = type;
         this.elevation = elevation;
     }
 }
 
+[Serializable]
+public class Country
+{
+    public List<int> hexes;
+    [FormerlySerializedAs("Fort")]
+    public int fort;
 
-public enum TileType
-{
-    Water = 0, River = 1, Sand = 2, Land = 3, Road = 4, Mountain = 5, Impassible = 6
-}
-public enum Direction
-{
-    North = 0, NorthEast = 1, SouthEast = 2,
-    South = 3, SouthWest = 4, NorthWest = 5
+    public FortType type;
 }

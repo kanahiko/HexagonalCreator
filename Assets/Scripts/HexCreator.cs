@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HexCreator : MonoBehaviour
 {
@@ -9,7 +10,6 @@ public class HexCreator : MonoBehaviour
 
     public MeshFilter meshFilter;
     public MeshCollider collider;
-
     public GameObject highlight;
     Mesh mesh;
     void Start()
@@ -23,7 +23,7 @@ public class HexCreator : MonoBehaviour
         {
             mesh = new Mesh();
         }
-        Hex[,] hexes = new Hex[map.height, map.width];
+        Hex[,] hexes = new Hex[map.width,map.height];
 
         List<Vector3> vertices = new List<Vector3>();
         List<int> triangles = new List<int>();
@@ -39,10 +39,11 @@ public class HexCreator : MonoBehaviour
                 {
                     offset.x += i % 2 * Util.sideOffset;
                 }
-                CreateHex(ref vertexes, ref vertices, ref triangles,ref colors, offset, Util.color[map.types[j+i*map.height]], map.elevation[j + i * map.width]);
-                hexes[i, j] = new Hex(j, i,map.types[j + i*map.height], map.elevation[j+ i * map.width]);
+                CreateHex(ref vertexes, ref vertices, ref triangles,ref colors, offset, Util.color[map.types[j+i*map.width]], map.elevation[j + i * map.width]);
+                hexes[j, i] = new Hex(j, i,map.types[j + i*map.width], map.elevation[j+ i * map.width]);
                 var sprite = Instantiate(highlight);
                 sprite.transform.position = offset + new Vector3(0, 0.25f, 0);
+                sprite.name = $"{j} {i}";
                 MapController.sprites[j, i] = sprite.GetComponent<SpriteRenderer>();
             }
         }
@@ -58,6 +59,33 @@ public class HexCreator : MonoBehaviour
         Debug.Log(vertices.Count);
         //boxCollider.size = new Vector3(Util.halfRadius * 2 * width, 0.5f, Util.radius * 2 * height);
         //boxCollider.center = boxCollider.size / 2;
+    }
+
+    public void ChangeHex(int index, TileType type)
+    {
+        Color[] colors = mesh.colors;
+        for (int i = 0, j = 0; i < colors.Length; i++)
+        {
+            if (colors[i] == Color.white)
+            {
+                continue;
+            }
+            else
+            {
+                if (j != index)
+                {
+                    j++;
+                }
+                else
+                {
+                    colors[i] = Util.color[type];
+                    break;
+                }
+            }
+        }
+
+        mesh.SetColors(colors);
+        collider.sharedMesh = mesh;
     }
 
     void CreateHex(ref Dictionary<string,int> vertexes,ref List<Vector3> vertices, ref List<int> triangles,ref List<Color> colors, Vector3 offset, Color color, int elevation)

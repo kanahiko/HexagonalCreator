@@ -1,29 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public static class PathFinding
 {
-    public static List<HexPath> GetMovableHexes(Hex startHex,int moveCount)
+    public static Dictionary<Hex, HexPath> GetMovableHexes(Hex startHex,int moveCount)
     {
-        List<HexPath> movableHexes = new List<HexPath>();
+        Dictionary<Hex, HexPath> movableHexes = new Dictionary<Hex, HexPath>();
         Dictionary<Hex, HexPath> usedHexes = new Dictionary<Hex, HexPath>();
-        List<HexPath> queue = new List<HexPath>();
+        Queue<HexPath> queue = new Queue<HexPath>();
         HexPath start = new HexPath(startHex);
         usedHexes.Add(startHex, start);
-        queue.Add(start);
+        queue.Enqueue(start);
 
-        MapController.sprites[startHex.x, startHex.z].color = Color.blue;
+        MapController.sprites[startHex.y, startHex.x].color = Color.blue;
 
         while(queue.Count > 0)
         {
-            HexPath hex = queue[queue.Count - 1];
-            queue.RemoveAt(queue.Count - 1);
-            bool isOdd = hex.to.z % 2 != 0;
+            HexPath hex = queue.Dequeue();
+            //queue.RemoveAt(queue.Count - 1);
+            bool isOdd = hex.to.y % 2 != 0;
             for (int i = 0; i < 6; i++)
             {
                 Hex neighbour;
-                if (!Util.HexExist(isOdd,hex.to.z, hex.to.x,i, out neighbour))
+                if (!Util.HexExist(isOdd,hex.to.x, hex.to.y,i, out neighbour))
                 {
                     continue;
                 }
@@ -48,18 +49,24 @@ public static class PathFinding
 
                     if (!usedHexes.ContainsKey(neighbour))
                     {
-                        movableHexes.Add(usedHexes[neighbour]);
+                        movableHexes.Add(neighbour,usedHexes[neighbour]);
                     }
                     usedHexes[neighbour].distance = distance;
                     usedHexes[neighbour].from = hex.to;
-                    queue.Add(usedHexes[neighbour]);
+                    queue.Enqueue(usedHexes[neighbour]);
+                    MapController.sprites[neighbour.x, neighbour.y].color = Color.green;
+                    var texts = MapController.sprites[neighbour.x, neighbour.y].transform.GetComponentInChildren<Text>();
+                    texts.text = $"{distance}";
 
                     continue;
                 }
                 HexPath neighbourPath = new HexPath(hex.to, neighbour, distance);
-                queue.Add(neighbourPath);
-                movableHexes.Add(neighbourPath);
-                MapController.sprites[neighbour.x, neighbour.z].color = Color.green;
+                queue.Enqueue(neighbourPath);
+                movableHexes.Add(neighbour,neighbourPath);
+                MapController.sprites[neighbour.x, neighbour.y].color = Color.green;
+
+                var text = MapController.sprites[neighbour.x, neighbour.y].transform.GetComponentInChildren<Text>();
+                text.text = $"{neighbourPath.distance}";
                 usedHexes.Add(neighbour, neighbourPath);
             }
         }
@@ -91,12 +98,4 @@ public class HexPath
         this.to = to;
         this.distance = distance;
     }
-}
-
-public class Queue<T> : List<T>
-{
-    /*public T Next()
-    {
-        return base[]
-    }*/
 }
