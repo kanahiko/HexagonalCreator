@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class MapController : MonoBehaviour
 {
+    public MapData currentMapTest;
     public MapData currentMap;
     public HexCreator creator;
-    public GameController gameController;
+    //public GameMaster gameController;
 
     public static int width;
     public static int height;
@@ -21,8 +22,10 @@ public class MapController : MonoBehaviour
     public List<Unit> unitPrefabs;
     public static List<Unit> unitTypes;
 
-    void Start()
+    public void CreateMap(MapData map)
     {
+        currentMap = map;
+
         fortTypes = fortPrefabs;
         unitTypes = unitPrefabs;
         
@@ -31,8 +34,6 @@ public class MapController : MonoBehaviour
         sprites = new SpriteRenderer[width,height];
         hexes = creator.CreateMap(currentMap);
         MapCreator.CreateGameMap(currentMap);
-        
-        gameController.StartGame(currentMap);
 
         //Hex hex = hexes[width / 2, height / 2];
         //Dictionary<Hex, HexPath>  movableHexes = PathFinding.GetMovableHexes(hex, 5);

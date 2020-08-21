@@ -19,7 +19,7 @@ public static class Util
 
     public static Dictionary<TileType, Color> color = new Dictionary<TileType, Color>
     {
-        {TileType.Water, Color.blue },{TileType.River, Color.cyan },{TileType.Sand, Color.yellow },{TileType.Land, Color.green },
+        {TileType.Water, Color.blue },{TileType.River, Color.cyan },{TileType.Sand, Color.yellow },{TileType.Land, Color.green },{TileType.Forest, Color.magenta },
         {TileType.Road, Color.gray },{TileType.Mountain, Color.white },{TileType.Impassible, Color.black }
     };
 
@@ -64,6 +64,16 @@ public static class Util
     {
         return Mathf.Max(Mathf.Abs(pointA.x - pointB.x), Mathf.Abs(pointA.y - pointB.y), Mathf.Abs(pointA.z - pointB.z));
     }
+    public static int GetDistance(Vector2Int pointA, Vector2Int pointB)
+    {
+        return GetDistance(pointA.x, pointA.y, pointB.x, pointB.y);
+    }
+    public static int GetDistance(int pointAX, int pointAY, int pointBX, int pointBY)
+    {
+        Vector3Int cubePointA = Util.OffsetToCube(pointAX, pointAY);
+        Vector3Int cubePointB = Util.OffsetToCube(pointBX, pointBY);
+        return GetDistance(cubePointA, cubePointB);
+    }
     public static Vector2Int GetPositionToCoordinates(Vector3 position)
     {
         float x = position.x / (smallRadius * 2f);
@@ -95,7 +105,16 @@ public static class Util
 
         return new Vector2Int(iX, iZ);
     }
-
+    public static Vector3Int OffsetToCube(Vector2Int offset)
+    {
+        return OffsetToCube(offset.x, offset.y);
+    }
+    public static Vector3Int OffsetToCube(int x, int y)
+    {
+        int newX = x - (y - (y & 1)) / 2;
+        int newZ = y;
+        return new Vector3Int(newX, -newX - newZ, newZ);
+    }
     public static Vector2Int CubeToOffset(Vector2Int cube)
     {
         int column = cube.x + (cube.y - (cube.y & 1)) / 2;
@@ -108,26 +127,24 @@ public static class Util
         return new Vector3Int(x, -x - z, z);
     }
 
-    public static int GetDistanceFromType(TileType type)
+    public static int GetDistanceFromHex(Hex hex, Unit unit)
     {
-        switch (type)
+        if (hex.unit != null && hex.unit.capacity > 0 && (~hex.unit.type.holdableUnit & unit.unitType) != unit.unitType)
         {
-            case TileType.Water:
-                return 999;
-            case TileType.River:
-                return 999;
-            case TileType.Sand:
-                return 2;
-            case TileType.Land:
-                return 2;
-            case TileType.Road:
-                return 1;
-            case TileType.Mountain:
-                return 999;
-            case TileType.Impassible:
-                return 999;
+            return 2;
         }
-        return 999;
+
+        if (hex.unit != null || hex.fort != null)
+        {
+            return 999;
+        }
+        if (!unit.traversableTerrain.ContainsKey(hex.type))
+        {
+            return 999;
+        }
+
+        return unit.traversableTerrain[hex.type];
+
     }
 
     public static Vector2Int FindCoordinates(int index)

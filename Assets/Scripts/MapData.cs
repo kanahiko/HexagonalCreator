@@ -11,6 +11,7 @@ public class MapData : ScriptableObject
     public int width = 5;
     public int height = 5;
 
+    [EnumFlagsAttribute]
     public TileType[] types;
 
     public int[] elevation;
@@ -22,6 +23,8 @@ public class MapData : ScriptableObject
 public class Hex
 {
     //public Vector3Int coordinates;
+
+    public Vector3 position;
 
     public int x;
     public int y;

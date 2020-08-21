@@ -12,12 +12,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b6dddc81d47d714782fd3e5123e3c2d, type: 3}
   m_Name: TestUnit
   m_EditorClassIdentifier: 
-  name: 
+  name: TestUnit
+  unitType: 1
   hitPoints: 4
-  movement: 2
+  movement: 5
   damage: 1
   secondaryDamage: 0
   range: 1
-  price: 1
   capacity: 0
+  bomberCapacity: 0
+  price: 1
+  traversableTerrain:
+    reorderableList:
+      canAdd: 1
+      canRemove: 1
+      draggable: 1
+      expandable: 1
+      multipleSelection: 1
+      isExpanded: 1
+      label:
+        m_Text: Keys
+        m_Image: {fileID: 0}
+        m_Tooltip: 
+      headerHeight: 18
+      footerHeight: 13
+      slideEasing: 0.15
+      verticalSpacing: 2
+      showDefaultBackground: 1
+      elementDisplayType: 0
+      elementNameProperty: 
+      elementNameOverride: 
+      elementIcon: {fileID: 0}
+    reqReferences: {fileID: 0}
+    isExpanded: 1
+    _keyValues: 08000000020000000400000010000000
+    _keys: 08000000020000000400000010000000
+    _values: 04000000020000000200000001000000
+  holdableUnit: 0
   unitModel: {fileID: 3154801634796866689, guid: 827b1136fb1313b4c95945abbff7546f, type: 3}

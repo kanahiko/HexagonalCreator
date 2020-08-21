@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public static class PathFinding
 {
-    public static Dictionary<Hex, HexPath> GetMovableHexes(Hex startHex,int moveCount)
+    public static Dictionary<Hex, HexPath> GetMovableHexes(Hex startHex, int moveCount, int capacity, Unit unit)
     {
         Dictionary<Hex, HexPath> movableHexes = new Dictionary<Hex, HexPath>();
         Dictionary<Hex, HexPath> usedHexes = new Dictionary<Hex, HexPath>();
@@ -29,7 +29,7 @@ public static class PathFinding
                     continue;
                 }
 
-                int distance = hex.distance + Util.GetDistanceFromType(neighbour.type);
+                int distance = hex.distance + Util.GetDistanceFromHex(neighbour, unit);
 
                 if (distance > moveCount)
                 {
@@ -72,10 +72,63 @@ public static class PathFinding
         }
         return movableHexes;
     }
+    public static List<Hex> GetAttackableHexes(Hex startHex, Side side, int range)
+    {
+        List<Hex> attackableHexes = new List<Hex>();
+        HashSet<Hex> usedHexes = new HashSet<Hex>();
+        Queue<Hex> queue = new Queue<Hex>();
+        queue.Enqueue(startHex);
+
+        while (queue.Count > 0)
+        {
+            Hex hex = queue.Dequeue();
+            usedHexes.Add(hex);
+            bool isOdd = hex.y % 2 != 0;
+
+            for (int i = 0; i < 6; i++)
+            {
+                Hex neighbour;
+                if (!Util.HexExist(isOdd, hex.x, hex.y, i, out neighbour))
+                {
+                    continue;
+                }
+
+                if (usedHexes.Contains(neighbour))
+                {
+                    continue;
+                }
+                int distance = Util.GetDistance(startHex.x, startHex.y, neighbour.x, neighbour.y);
+                if (distance > range)
+                {
+                    continue;
+                }
+
+                if (neighbour.unit != null && neighbour.unit.side != side)
+                {
+                    attackableHexes.Add(neighbour);
+                }
+                queue.Enqueue(neighbour);
+            }
+        }
+
+        return attackableHexes;
+    }
+
+    public static void ClearPaths()
+    {
+        for (int i = 0; i < MapController.width; i++)
+        {
+            for (int j = 0; j < MapController.height; j++)
+            {
+                MapController.sprites[i, j].color = Color.white;
+                var text = MapController.sprites[i, j].transform.GetComponentInChildren<Text>();
+                text.text = "";
+            }
+        }
+    }
 
     static void CheckHexes()
     {
-
     }
 }
 

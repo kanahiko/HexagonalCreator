@@ -1,6 +1,9 @@
-﻿public enum TileType
+﻿using System;
+
+[Flags]
+public enum TileType
 {
-    Water = 0, River = 1, Sand = 2, Land = 3, Road = 4, Mountain = 5, Impassible = 6
+    Water = 128, River = 1, Sand = 2, Land = 4, Forest = 8, Road = 16, Mountain = 32, Impassible = 64
 }
 public enum Direction
 {
@@ -12,10 +15,11 @@ public enum Side
 {
     Red = 1, Blue = 0, None = 2
 }
-
+[Flags]
 public enum UnitType
 {
-   LAV, Tank,MobileArtillery,HAV,MissilePlatform,LandTransports
+    SmallUnit = 1, MediumUnit = 2, BigUnit = 4, AirCraft = 8, Bomber = 16, Transport = 32
+   //LAV, Tank,MobileArtillery,HAV,MissilePlatform,LandTransports
 }
 
 public enum FortType
