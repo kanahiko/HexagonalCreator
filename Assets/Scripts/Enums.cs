@@ -21,6 +21,11 @@ public enum UnitType
     SmallUnit = 1, MediumUnit = 2, BigUnit = 4, AirCraft = 8, Bomber = 16, Transport = 32
    //LAV, Tank,MobileArtillery,HAV,MissilePlatform,LandTransports
 }
+[Flags]
+public enum UnitUIType
+{
+    Normal=1, Naval=2,Special=4
+}
 
 public enum FortType
 {
@@ -29,5 +34,5 @@ public enum FortType
 
 public enum PhaseType
 {
-   InitialDisclosure, Guerilla, Combat, Recruitment
+   InitialDisclosure= 0,InitialBuying = 1, Guerilla = 2, Combat = 3, Recruitment = 4, Disclosing = 5, DisclosingBuying =6
 }

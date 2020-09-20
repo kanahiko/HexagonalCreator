@@ -14,7 +14,7 @@ public static class PathFinding
         usedHexes.Add(startHex, start);
         queue.Enqueue(start);
 
-        MapController.sprites[startHex.x, startHex.y].color = Color.blue;
+        //MapController.sprites[startHex.x, startHex.y].color = Color.blue;
 
         while(queue.Count > 0)
         {
@@ -54,19 +54,19 @@ public static class PathFinding
                     usedHexes[neighbour].distance = distance;
                     usedHexes[neighbour].from = hex.to;
                     queue.Enqueue(usedHexes[neighbour]);
-                    MapController.sprites[neighbour.x, neighbour.y].color = Color.green;
-                    var texts = MapController.sprites[neighbour.x, neighbour.y].transform.GetComponentInChildren<Text>();
-                    texts.text = $"{distance}";
+                    //MapController.sprites[neighbour.x, neighbour.y].color = Color.green;
+                    //var texts = MapController.sprites[neighbour.x, neighbour.y].transform.GetComponentInChildren<Text>();
+                    //texts.text = $"{distance}";
 
                     continue;
                 }
                 HexPath neighbourPath = new HexPath(hex.to, neighbour, distance);
                 queue.Enqueue(neighbourPath);
                 movableHexes.Add(neighbour,neighbourPath);
-                MapController.sprites[neighbour.x, neighbour.y].color = Color.green;
+                //MapController.sprites[neighbour.x, neighbour.y].color = Color.green;
 
-                var text = MapController.sprites[neighbour.x, neighbour.y].transform.GetComponentInChildren<Text>();
-                text.text = $"{neighbourPath.distance}";
+                //var text = MapController.sprites[neighbour.x, neighbour.y].transform.GetComponentInChildren<Text>();
+                //text.text = $"{neighbourPath.distance}";
                 usedHexes.Add(neighbour, neighbourPath);
             }
         }
@@ -120,9 +120,9 @@ public static class PathFinding
         {
             for (int j = 0; j < MapController.height; j++)
             {
-                MapController.sprites[i, j].color = Color.white;
-                var text = MapController.sprites[i, j].transform.GetComponentInChildren<Text>();
-                text.text = "";
+                //MapController.sprites[i, j].color = Color.white;
+                //var text = MapController.sprites[i, j].transform.GetComponentInChildren<Text>();
+                //text.text = "";
             }
         }
     }

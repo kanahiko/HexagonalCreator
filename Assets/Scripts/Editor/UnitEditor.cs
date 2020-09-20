@@ -29,4 +29,15 @@ public class EnumUnitTypeFlagsAttributeDrawer : PropertyDrawer
         property.intValue = (int)value;
         //_property.intValue = EditorGUI.MaskField(_position, _label, _property.intValue, _property.enumNames);
     }
+}[CustomPropertyDrawer(typeof(EnumUnitUITypeFlagsAttribute))]
+public class EnumUnitUITypeFlagsAttributeDrawer : PropertyDrawer
+{
+    public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+    {
+        var pos = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+        UnitUIType value = (UnitUIType)property.intValue;
+        value = (UnitUIType)EditorGUI.EnumPopup(pos, value);
+        property.intValue = (int)value;
+        //_property.intValue = EditorGUI.MaskField(_position, _label, _property.intValue, _property.enumNames);
+    }
 }

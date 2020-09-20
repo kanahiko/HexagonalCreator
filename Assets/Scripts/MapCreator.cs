@@ -6,7 +6,10 @@ public static class MapCreator
 {
     public static List<FortObject> blueForts = new List<FortObject>();
     public static List<FortObject> redForts = new List<FortObject>();
-    
+    public static string[] sideToName = new string[]
+    {
+        "RedFort","BlueFort","NeutralFort"
+    };
     public static void CreateGameMap(MapData map)
     {
         CreateForts(map);
@@ -21,34 +24,48 @@ public static class MapCreator
         for (int i = 0; i < count; i++)
         {
             int index = Random.Range(0, availableCountries.Count);
-            
-            GameObject newFort = new GameObject("BlueFort");
-            FortObject fortObject = newFort.AddComponent<FortObject>();
-            fortObject.InitializeFort(availableCountries[index], Side.Blue);
-            
-            Vector2Int coordinates = Util.FindCoordinates(availableCountries[index].fort);
-            newFort.transform.localPosition = Util.GetPosition(coordinates);
-            
-            fortObject.hex = Util.HexExist(coordinates.x, coordinates.y);
-            fortObject.hex.fort = fortObject;
-            
-            blueForts.Add(fortObject);
+            blueForts.Add(CreateFort(availableCountries[index], Side.Blue));
             availableCountries.RemoveAt(index);
         }
         
         for (int i = 0; i < availableCountries.Count; i++)
         {
-            GameObject newFort = new GameObject("RedFort");
-            FortObject fortObject = newFort.AddComponent<FortObject>();
-            fortObject.InitializeFort(availableCountries[i], Side.Red);
+            redForts.Add(CreateFort(availableCountries[i], Side.Red));
+        }
+    }
 
-            Vector2Int coordinates = Util.FindCoordinates(availableCountries[i].fort);
-            newFort.transform.localPosition = Util.GetPosition(coordinates);
-
-            fortObject.hex = Util.HexExist(coordinates.x, coordinates.y);
-            fortObject.hex.fort = fortObject;
+    static FortObject CreateFort(Country country,Side side)
+    {
+        GameObject newFort = new GameObject(sideToName[(int) side]);
+        FortObject fortObject = newFort.AddComponent<FortObject>();
+        fortObject.InitializeFort(country, side);
             
-            redForts.Add(fortObject);
+        Vector2Int coordinates = Util.FindCoordinates(country.fort);
+        newFort.transform.localPosition = Util.GetPosition(coordinates);
+            
+        fortObject.fortHex = Util.HexExist(coordinates.x, coordinates.y);
+        fortObject.fortHex.fort = fortObject;
+        ColorFort(country, fortObject, side);
+
+        return fortObject;
+    }
+
+    static void ColorFort(Country country, FortObject fort, Side side)
+    {
+        for(int i=0;i<country.hexes.Count;i++)
+        {
+            Vector2Int coordinates = Util.FindCoordinates(country.hexes[i]);
+            if (country.fort == country.hexes[i])
+            {
+                MapController.sprites[coordinates.x, coordinates.y].color = side == Side.Blue ? Color.blue : Color.red;
+            }
+            else
+            {
+                MapController.sprites[coordinates.x, coordinates.y].color = side == Side.Blue ? Color.cyan : Color.magenta;
+            }
+
+            MapController.hexes[coordinates.x, coordinates.y].fort = fort;
+            fort.hexes[i] = MapController.hexes[coordinates.x, coordinates.y];
         }
     }
 }

@@ -25,6 +25,8 @@ public class UIController : MonoBehaviour
     {
         if (unit != null && unit.boardedUnits.Count >0)
         {
+            //TODO:redo to disable rendering
+            transportButton[0].transform.parent.gameObject.SetActive(true);
             transportButton[0].gameObject.SetActive(true);
             for (int i = 0; i < transportButton.Length - 1; i++)
             {
@@ -44,6 +46,8 @@ public class UIController : MonoBehaviour
 
     void HideTransportButtons()
     {
+        //TODO:redo to disable rendering
+        transportButton[0].transform.parent.gameObject.SetActive(false);
         for (int i = 0; i < transportButton.Length; i++)
         {
             transportButton[i].gameObject.SetActive(false);

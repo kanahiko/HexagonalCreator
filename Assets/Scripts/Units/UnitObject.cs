@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitObject : MonoBehaviour
 {
@@ -29,6 +30,8 @@ public class UnitObject : MonoBehaviour
 
     public List<UnitObject> boardedUnits;
 
+    public Text testText;
+    
     public void Initialize(Unit unit, Vector2Int coordinates)
     {
         movableHexes = new Dictionary<Hex, HexPath>();
@@ -50,7 +53,8 @@ public class UnitObject : MonoBehaviour
         //Move(false);
         GameObject model = GameObject.Instantiate(unit.unitModel, transform);
         modelRenderer = model.GetComponent<MeshRenderer>();
-
+        testText = model.GetComponentInChildren<Text>();
+        
         ResetUnit();
         isAnimating = false;
 
@@ -97,6 +101,13 @@ public class UnitObject : MonoBehaviour
         if (animate)
         {
             MoveToHex();
+            if (boardedUnits != null && boardedUnits.Count > 0)
+            {
+                foreach (var unit in boardedUnits)
+                {
+                    unit.hex = hex;
+                }
+            }
             //Invoke(nameof(MoveToHex), 2); 
         }
         else
@@ -151,6 +162,8 @@ public class UnitObject : MonoBehaviour
     IEnumerator MoveAnimation(List<Vector3> path)
     {
         modelRenderer.enabled = true;
+        testText.transform.localPosition = new Vector3(960,540);
+        testText.text = $"{(hex!= null ? hex.position.ToString():"null")} ";
         //yield return new WaitForSeconds(2);
         isAnimating = true;
         int index = path.Count - 1;
@@ -213,7 +226,10 @@ public class UnitObject : MonoBehaviour
         if (hex.unit != this)
         {
             modelRenderer.enabled = false;
+            testText.transform.localPosition = new Vector3(960,540*2);
         }
+
+        testText.text = $"{(hex!= null ? hex.position.ToString():"null")} {(hex!=null && hex.unit == this? "this":hex.unit.name)}";
     }
 
     bool Rotate(ref float rotationT, Vector3 forward, Vector3 normal)

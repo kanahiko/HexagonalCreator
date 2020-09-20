@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class FortObject : MonoBehaviour
 {
-    public Hex hex;
+    public int treasury;
+    
+    public Hex fortHex;
+    public Hex[] hexes;
     
     public int capacity;
     public Side side;

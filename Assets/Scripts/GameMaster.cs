@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,9 +14,6 @@ public class GameMaster : MonoBehaviour
     int turnCount = 0;
 
     bool doGuerilla;
-
-    public int redTreasury;
-    public int blueTreasury;
     public void Start()
     {
         controller.hexClicked = HexClicked;
@@ -35,19 +33,13 @@ public class GameMaster : MonoBehaviour
         currentTurn = Side.Blue;
         currentPhase = PhaseType.InitialDisclosure;
 
-
-        redTreasury = 0;
-        blueTreasury = 0;
-
         //tests
-        AddUnit(MapController.unitTypes[1], new Vector2Int(4,3));
+        /*AddUnit(MapController.unitTypes[1], new Vector2Int(4,3));
         Vector2Int coords = new Vector2Int(2,3);
         AddUnit(MapController.unitTypes[0],coords);
 
         HexClicked(coords);
-        HexClicked(new Vector2Int(3,1));
-
-
+        HexClicked(new Vector2Int(3,1));*/
     }
 
     public void AddUnit(Unit unit, Vector2Int coordinates)
@@ -90,36 +82,23 @@ public class GameMaster : MonoBehaviour
     void AddMoney()
     {
         List<FortObject> sideForts = currentTurn == Side.Blue ? gameController.blueForts : gameController.redForts;
-        int sum = 0;
 
         foreach (var fort in sideForts)
         {
-            if (fort.revenueTurnsLeft > 0)
+            if (fort.side == currentTurn && fort.revenueTurnsLeft > 0)
             {
-                sum += fort.fort.revenue;
+                fort.treasury += fort.fort.revenue;
                 fort.revenueTurnsLeft--;
             }
-        }
-
-        if (currentTurn == Side.Blue)
-        {
-            blueTreasury += sum;
-        }
-        else
-        {
-            redTreasury += sum;
         }
     }
 
     public void RemoveMoney(int money)
     {
-        if (currentTurn == Side.Blue)
+        //take selected country and remove money
+        if (CountryController.selectedFort != null)
         {
-            blueTreasury -= money;
-        }
-        else
-        {
-            redTreasury -= money;
+            CountryController.selectedFort.treasury -= money;
         }
     }
 
@@ -128,6 +107,9 @@ public class GameMaster : MonoBehaviour
         switch (currentPhase)
         {
             case PhaseType.InitialDisclosure:
+                currentPhase = PhaseType.InitialBuying;
+                break;
+            case PhaseType.InitialBuying:
                 if (doGuerilla)
                 {
                     currentPhase = PhaseType.Guerilla;
@@ -145,31 +127,76 @@ public class GameMaster : MonoBehaviour
                 currentPhase = PhaseType.Recruitment;
                 break;
             case PhaseType.Recruitment:
+                currentPhase = PhaseType.Disclosing;
+                break;
+            case PhaseType.Disclosing:
+                //TODO: if no disclosing or no countries change turn
+                currentPhase = PhaseType.DisclosingBuying;
+                break;
+            case PhaseType.DisclosingBuying:
                 ChangeTurn();
                 break;
         }
     }
 
-    public void Disclose()
+    public void Disclose(FortObject fort)
     {
-
+        fort.side = currentTurn;
+        //TODO:color differenctly
     }
 
+#if UNITY_EDITOR
+    /// <summary>
+    /// for showing unit path
+    /// </summary>
+    private UnitObject selectedUnit;
+#endif
     public void HexClicked(Vector2Int offsetCoordinates)
     {
         Hex selectedHex = Util.HexExist(offsetCoordinates.x, offsetCoordinates.y);
         switch (currentPhase)
         {
             case PhaseType.InitialDisclosure:
-
+                if (CountryController.SelectDisclosableFort(selectedHex, currentTurn))
+                {
+                    //TODO:heck can disclose
+                    Disclose(selectedHex.fort);
+                }
+                break;
+            case PhaseType.InitialBuying:
                 break;
             case PhaseType.Guerilla:
-                break;
+                //break;
             case PhaseType.Combat:
-                UnitController.SelectUnit(selectedHex);
+                if (UnitController.SelectUnit(selectedHex) && selectedHex.unit != null)
+                {
+#if UNITY_EDITOR
+                    selectedUnit = selectedHex.unit;
+#endif
+                }
                 break;
             case PhaseType.Recruitment:
                 break;
+            case PhaseType.Disclosing:
+                break;
+            case PhaseType.DisclosingBuying:
+                break;
         }
     }
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (selectedUnit != null)
+        {
+            Gizmos.DrawSphere(selectedUnit.hex.position,0.2f);
+
+            foreach (var hex in selectedUnit.movableHexes)
+            {
+                Gizmos.color = Color.Lerp(Color.green, Color.red, (hex.Value.distance / (float) selectedUnit.moves));
+                Gizmos.DrawSphere(hex.Key.position,0.1f);
+                Gizmos.DrawLine(hex.Key.position,hex.Value.from.position);
+            }
+        }
+    }
+#endif
 }

@@ -5,18 +5,18 @@ using UnityEngine;
 
 public static class UnitController
 {
-    public static UnitObject selectedFort;
+    //public static UnitObject selectedFort;
     public static UnitObject selectedUnit;
     public static Action<UnitObject> ShowTransportButtons;
     
-    public static void SelectUnit(Hex hex)
+    public static bool SelectUnit(Hex hex)
     {
         if (hex != null && selectedUnit != null)
         {
             if (selectedUnit.movableHexes.ContainsKey(hex))
             {
                 MoveUnit(hex);
-                return;
+                return false;
             }
         }
         if (hex == null || hex.unit == null)
@@ -28,12 +28,13 @@ public static class UnitController
                 ShowTransportButtons?.Invoke(null);
                 PathFinding.ClearPaths();
             }
-            return;
+            return false;
         }
         
         selectedUnit = hex.unit;
         ShowTransportButtons?.Invoke(selectedUnit);
         selectedUnit.movableHexes = PathFinding.GetMovableHexes(hex, selectedUnit.moves,selectedUnit.capacity, selectedUnit.type);
+        return true;
     }
 
     public static void SelectFort()
@@ -92,5 +93,9 @@ public static class UnitController
         unitObject.Initialize(unit, coordinates);
 
         return unitObject;
+    }
+    public static void ResetController()
+    {
+        selectedUnit = null;
     }
 }

@@ -6,9 +6,13 @@ using UnityEngine;
 [CreateAssetMenu(fileName ="unit", menuName ="Unit")]
 public class Unit : ScriptableObject
 {
+    public Texture icon;
     public string name;
     [EnumUnitTypeFlagsAttribute]
     public UnitType unitType;
+
+    [EnumUnitUITypeFlagsAttribute]
+    public UnitUIType unityUIType;
     
     public int hitPoints;
     public int movement;
@@ -32,6 +36,9 @@ public class EnumFlagsAttribute : PropertyAttribute
 public class EnumUnitTypeFlagsAttribute : PropertyAttribute
 {
     public EnumUnitTypeFlagsAttribute() { }
+}public class EnumUnitUITypeFlagsAttribute : PropertyAttribute
+{
+    public EnumUnitUITypeFlagsAttribute() { }
 }
 
 

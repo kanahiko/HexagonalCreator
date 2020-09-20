@@ -42,10 +42,14 @@ public class HexCreator : MonoBehaviour
                 CreateHex(ref vertexes, ref vertices, ref triangles,ref colors, offset, Util.color[map.types[j+i*map.width]], map.elevation[j + i * map.width]);
                 hexes[j, i] = new Hex(j, i,map.types[j + i*map.width], map.elevation[j+ i * map.width]);
                 hexes[j, i].position = offset;
+                
+                
 
                 var sprite = Instantiate(highlight);
                 sprite.transform.position = offset + new Vector3(0, 0.25f, 0);
                 sprite.name = $"{j} {i}";
+                var text = sprite.transform.GetComponentInChildren<Text>();
+                text.text = $"{j+i*map.width}";
                 MapController.sprites[j, i] = sprite.GetComponent<SpriteRenderer>();
             }
         }

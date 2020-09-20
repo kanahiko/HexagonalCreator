@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameController: MonoBehaviour
+public class GameController
 {
 
     public List<UnitObject> redUnits = new List<UnitObject>();
@@ -39,6 +39,9 @@ public class GameController: MonoBehaviour
         blueUnits.Clear();
         highlightableForts.Clear();
         highlightableUnits.Clear();
+
+        CountryController.ResetController();
+        UnitController.ResetController();
     }
 
     public void GetDisclosableForts(Side currentTurn)

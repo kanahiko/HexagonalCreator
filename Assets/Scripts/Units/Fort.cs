@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "fort", menuName ="Fort")]
 public class Fort : ScriptableObject
 {
+    
     public int guerilla;
     public int revenue;
 

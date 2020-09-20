@@ -36,6 +36,7 @@ public class Hex
 
     public UnitObject unit;
     public FortObject fort;
+    //public Country country;
 
     public Hex(int x,  int y, TileType type, int elevation)
     {
@@ -50,8 +51,8 @@ public class Hex
 [Serializable]
 public class Country
 {
+    
     public List<int> hexes;
-    [FormerlySerializedAs("Fort")]
     public int fort;
 
     public FortType type;

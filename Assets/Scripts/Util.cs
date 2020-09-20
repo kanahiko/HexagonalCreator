@@ -127,6 +127,13 @@ public static class Util
         return new Vector3Int(x, -x - z, z);
     }
 
+    public static UnitUIType GetPermittedUnits(bool hasNormal, bool hasNaval, bool hasSpecial)
+    {
+        return (UnitUIType)((hasSpecial ? ((int)UnitUIType.Special) : 0) + 
+               (hasNaval ? ((int)UnitUIType.Naval) : 0) + 
+               (hasNormal ? ((int)UnitUIType.Normal) : 0));
+    }
+
     public static int GetDistanceFromHex(Hex hex, Unit unit)
     {
         if (hex.unit != null && hex.unit.capacity > 0 && (~hex.unit.type.holdableUnit & unit.unitType) != unit.unitType)
