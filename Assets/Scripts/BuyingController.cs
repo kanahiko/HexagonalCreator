@@ -11,11 +11,25 @@ public class BuyingController : MonoBehaviour
         selectedBuyingUnit = null;
     }
 
-    public void BuyUnit(Hex hex, int treasury)
+    public UnitObject BuyUnit(Hex hex, int treasury)
     {
         if (hex.unit == null && hex.fort == null && selectedBuyingUnit != null && selectedBuyingUnit.price <= treasury)
         {
 
+            UnitObject newUnit = UnitController.CreateUnit(unit, coordinates);
+            newUnit.side = currentTurn;
+            if (currentTurn == Side.Blue)
+            {
+                gameController.blueUnits.Add(newUnit);
+            }
+            else
+            {
+                gameController.redUnits.Add(newUnit);
+            }
+        
+            return newUnit;
         }
+
+        return null;
     }
 }

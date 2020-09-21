@@ -42,20 +42,6 @@ public class GameMaster : MonoBehaviour
         HexClicked(new Vector2Int(3,1));*/
     }
 
-    public void AddUnit(Unit unit, Vector2Int coordinates)
-    {
-        UnitObject newUnit = UnitController.CreateUnit(unit, coordinates);
-        newUnit.side = currentTurn;
-        if (currentTurn == Side.Blue)
-        {
-            gameController.blueUnits.Add(newUnit);
-        }
-        else
-        {
-            gameController.redUnits.Add(newUnit);
-        }
-    }
-
     public void ChangeTurn()
     {
         if (currentTurn == Side.Blue)
@@ -168,12 +154,16 @@ public class GameMaster : MonoBehaviour
             case PhaseType.Guerilla:
                 //break;
             case PhaseType.Combat:
+#if UNITY_EDITOR
                 if (UnitController.SelectUnit(selectedHex) && selectedHex.unit != null)
                 {
-#if UNITY_EDITOR
+
                     selectedUnit = selectedHex.unit;
-#endif
+
                 }
+#else
+                UnitController.SelectUnit(selectedHex);
+#endif
                 break;
             case PhaseType.Recruitment:
                 break;
