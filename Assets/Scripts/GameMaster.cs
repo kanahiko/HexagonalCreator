@@ -14,9 +14,19 @@ public class GameMaster : MonoBehaviour
     int turnCount = 0;
 
     bool doGuerilla;
+
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// for showing unit path
+    /// </summary>
+    private UnitObject selectedUnit;
+#endif
     public void Start()
     {
+        BuyingController.master = this;
         controller.hexClicked = HexClicked;
+        controller.hexDeselected = HexDeselected;
         StartGame(mapController.currentMapTest);
     }
     public void StartGame(MapData map)
@@ -62,31 +72,9 @@ public class GameMaster : MonoBehaviour
             currentTurn = Side.Blue;
             currentTurn++;
         }
-        AddMoney();
+        CountryController.AddMoney(currentTurn);
     }
 
-    void AddMoney()
-    {
-        List<FortObject> sideForts = currentTurn == Side.Blue ? gameController.blueForts : gameController.redForts;
-
-        foreach (var fort in sideForts)
-        {
-            if (fort.side == currentTurn && fort.revenueTurnsLeft > 0)
-            {
-                fort.treasury += fort.fort.revenue;
-                fort.revenueTurnsLeft--;
-            }
-        }
-    }
-
-    public void RemoveMoney(int money)
-    {
-        //take selected country and remove money
-        if (CountryController.selectedFort != null)
-        {
-            CountryController.selectedFort.treasury -= money;
-        }
-    }
 
     public void ChangePhase()
     {
@@ -96,15 +84,7 @@ public class GameMaster : MonoBehaviour
                 currentPhase = PhaseType.InitialBuying;
                 break;
             case PhaseType.InitialBuying:
-                if (doGuerilla)
-                {
-                    currentPhase = PhaseType.Guerilla;
-                    doGuerilla = false;
-                }
-                else
-                {
-                    currentPhase = PhaseType.Combat;
-                }
+                ChangeTurn();
                 break;
             case PhaseType.Guerilla:
                 currentPhase = PhaseType.Combat;
@@ -125,18 +105,6 @@ public class GameMaster : MonoBehaviour
         }
     }
 
-    public void Disclose(FortObject fort)
-    {
-        fort.side = currentTurn;
-        //TODO:color differenctly
-    }
-
-#if UNITY_EDITOR
-    /// <summary>
-    /// for showing unit path
-    /// </summary>
-    private UnitObject selectedUnit;
-#endif
     public void HexClicked(Vector2Int offsetCoordinates)
     {
         Hex selectedHex = Util.HexExist(offsetCoordinates.x, offsetCoordinates.y);
@@ -145,8 +113,10 @@ public class GameMaster : MonoBehaviour
             case PhaseType.InitialDisclosure:
                 if (CountryController.SelectDisclosableFort(selectedHex, currentTurn))
                 {
-                    //TODO:heck can disclose
-                    Disclose(selectedHex.fort);
+                    //TODO:check can disclose
+                    CountryController.Disclose(selectedHex.fort, currentTurn);
+                    currentPhase = PhaseType.InitialBuying;
+                    //next phase
                 }
                 break;
             case PhaseType.InitialBuying:
@@ -164,6 +134,28 @@ public class GameMaster : MonoBehaviour
 #else
                 UnitController.SelectUnit(selectedHex);
 #endif
+                break;
+            case PhaseType.Recruitment:
+                break;
+            case PhaseType.Disclosing:
+                break;
+            case PhaseType.DisclosingBuying:
+                break;
+        }
+    }
+
+    public void HexDeselected()
+    {
+        switch (currentPhase)
+        {
+            case PhaseType.InitialDisclosure:
+                break;
+            case PhaseType.InitialBuying:
+                break;
+            case PhaseType.Guerilla:
+            //break;
+            case PhaseType.Combat:
+                UnitController.DeselectUnit();
                 break;
             case PhaseType.Recruitment:
                 break;

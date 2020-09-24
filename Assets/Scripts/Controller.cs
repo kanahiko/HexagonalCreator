@@ -13,6 +13,7 @@ public class Controller : MonoBehaviour
     Vector2 movement;
 
     public Action<Vector2Int> hexClicked;
+    public Action hexDeselected;
 
     void Awake()
     {
@@ -26,15 +27,17 @@ public class Controller : MonoBehaviour
         controls.PlayerControls.Movement.canceled += ctx => movement = Vector2.zero;
 
         controls.PlayerControls.Action.performed += ctx => OnClick();
+        controls.PlayerControls.Action.performed += ctx => OnDeselect();
     }
 
-    void Update()
+
+/*    void Update()
     {
-        /*if (movement != Vector2.zero)
+        *//*if (movement != Vector2.zero)
         {
             Debug.Log(movement);
-        }*/
-    }
+        }*//*
+    }*/
 
     void OnClick()
     {
@@ -65,6 +68,13 @@ public class Controller : MonoBehaviour
 
                 creator.ChangeHex(hex.y + hex.x*6, hex.type);*/
             }
+        }
+    }
+    private void OnDeselect()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject(-1))
+        {
+            hexDeselected?.Invoke();
         }
     }
 

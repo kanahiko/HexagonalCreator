@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuyingController : MonoBehaviour
+public static class BuyingController 
 {
-    public Unit selectedBuyingUnit;
+    public static GameMaster master;
+    public static Unit selectedBuyingUnit;
 
-    public void ResetController()
+    public static void ResetController()
     {
         selectedBuyingUnit = null;
     }
 
-    public UnitObject BuyUnit(Hex hex, int treasury)
+    public static UnitObject BuyUnit(Hex hex, Side side, int treasury)
     {
         if (hex.unit == null && hex.fort == null && selectedBuyingUnit != null && selectedBuyingUnit.price <= treasury)
         {
 
-            UnitObject newUnit = UnitController.CreateUnit(unit, coordinates);
-            newUnit.side = currentTurn;
-            if (currentTurn == Side.Blue)
+            UnitObject newUnit = UnitController.CreateUnit(selectedBuyingUnit, new Vector2Int(hex.x,hex.y));
+            newUnit.side = side;
+            if (side == Side.Blue)
             {
                 gameController.blueUnits.Add(newUnit);
             }

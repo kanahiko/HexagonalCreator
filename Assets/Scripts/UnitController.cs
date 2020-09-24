@@ -11,30 +11,43 @@ public static class UnitController
     
     public static bool SelectUnit(Hex hex)
     {
-        if (hex != null && selectedUnit != null)
+        if (hex == null || (hex.unit == null && selectedUnit == null))
+        {
+            return false;
+        }
+        if (selectedUnit != null)
         {
             if (selectedUnit.movableHexes.ContainsKey(hex))
             {
                 MoveUnit(hex);
                 return false;
             }
-        }
-        if (hex == null || hex.unit == null)
-        {
-            if (selectedUnit)
+            else
             {
-                selectedUnit.movableHexes.Clear();
-                selectedUnit = null;
-                ShowTransportButtons?.Invoke(null);
-                PathFinding.ClearPaths();
+                if (selectedUnit.atta)
             }
-            return false;
         }
         
         selectedUnit = hex.unit;
         ShowTransportButtons?.Invoke(selectedUnit);
         selectedUnit.movableHexes = PathFinding.GetMovableHexes(hex, selectedUnit.moves,selectedUnit.capacity, selectedUnit.type);
         return true;
+    }
+
+    public static void DeselectUnit()
+    {
+        if (selectedUnit != null)
+        {
+            selectedUnit.movableHexes.Clear();
+            selectedUnit = null;
+            ShowTransportButtons?.Invoke(null);
+            PathFinding.ClearPaths();
+        }
+    }
+
+    public static void Attack()
+    {
+
     }
 
     public static void SelectFort()

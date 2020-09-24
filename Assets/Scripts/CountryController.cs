@@ -6,6 +6,37 @@ using UnityEngine;
 public static class CountryController
 {
     public static FortObject selectedFort;
+
+    public static void AddMoney(Side side)
+    {
+        List<FortObject> sideForts = side == Side.Blue ? gameController.blueForts : gameController.redForts;
+
+        foreach (var fort in sideForts)
+        {
+            if (fort.side == side && fort.revenueTurnsLeft > 0)
+            {
+                fort.treasury += fort.fort.revenue;
+                fort.revenueTurnsLeft--;
+            }
+        }
+    }
+
+    public static void RemoveMoney(int money)
+    {
+        //take selected country and remove money
+        if (selectedFort != null)
+        {
+            selectedFort.treasury -= money;
+        }
+    }
+
+
+    public static void Disclose(FortObject fort, Side side)
+    {
+        fort.side = side;
+        //TODO:color differenctly
+    }
+
     public static void SelectFort(Hex hex, Side side)
     {
         if (hex.fort != null && hex.fort.side == side)
