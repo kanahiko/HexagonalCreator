@@ -35,8 +35,7 @@ public class Hex
     public int elevation;
 
     public UnitObject unit;
-    public FortObject fort;
-    //public Country country;
+    public CountryObject fort;
 
     public Hex(int x,  int y, TileType type, int elevation)
     {

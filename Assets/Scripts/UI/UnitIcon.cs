@@ -3,15 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UnitIcon : MonoBehaviour
+public class UnitIcon : MonoBehaviour, IPointerClickHandler
 {
     public RawImage icon;
     public TextMeshProUGUI nameLabel;
 
     public List<TextMeshProUGUI> stats;
-
+    public Action UnitSelected;
 
     public void SetStats(string name, Texture icon, int health, int move, int attack, int attack2, int range,
         int capacity, int cost)
@@ -53,6 +54,11 @@ public class UnitIcon : MonoBehaviour
     public void Enable()
     {
         gameObject.SetActive(true);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        UnitSelected?.Invoke();
     }
 }
 [Serializable]

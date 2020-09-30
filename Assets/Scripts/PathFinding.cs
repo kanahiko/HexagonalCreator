@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public static class PathFinding
 {
-    public static Dictionary<Hex, HexPath> GetMovableHexes(Hex startHex, int moveCount, int capacity, Unit unit)
+    public static Dictionary<Hex, HexPath> GetMovableHexes(Hex startHex, int moveCount, Unit unit)
     {
         Dictionary<Hex, HexPath> movableHexes = new Dictionary<Hex, HexPath>();
         Dictionary<Hex, HexPath> usedHexes = new Dictionary<Hex, HexPath>();
@@ -72,12 +72,17 @@ public static class PathFinding
         }
         return movableHexes;
     }
-    public static List<Hex> GetAttackableHexes(Hex startHex, Side side, int range)
+    public static void GetAttackableHexes(UnitObject unit)
     {
-        List<Hex> attackableHexes = new List<Hex>();
+        //List<Hex> attackableHexes = new List<Hex>();
+        unit.attackableHexes.Clear();
+        if (unit.hasAttacked && unit.hasSecondaryAttacked)
+        {
+            return;
+        }
         HashSet<Hex> usedHexes = new HashSet<Hex>();
         Queue<Hex> queue = new Queue<Hex>();
-        queue.Enqueue(startHex);
+        queue.Enqueue(unit.hex);
 
         while (queue.Count > 0)
         {
@@ -97,21 +102,22 @@ public static class PathFinding
                 {
                     continue;
                 }
-                int distance = Util.GetDistance(startHex.x, startHex.y, neighbour.x, neighbour.y);
-                if (distance > range)
+                int distance = Util.GetDistance(unit.hex.x, unit.hex.y, neighbour.x, neighbour.y);
+                if (distance > unit.type.range)
                 {
                     continue;
                 }
 
-                if (neighbour.unit != null && neighbour.unit.side != side)
+                if (neighbour.unit != null && neighbour.unit.side != unit.side)
                 {
-                    attackableHexes.Add(neighbour);
+                    unit.attackableHexes.Add(neighbour);
+                    //attackableHexes.Add(neighbour);
                 }
                 queue.Enqueue(neighbour);
             }
         }
 
-        return attackableHexes;
+        //return attackableHexes;
     }
 
     public static void ClearPaths()

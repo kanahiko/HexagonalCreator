@@ -153,6 +153,7 @@ public class UnitBuyingUI : MonoBehaviour
             }
             GameObject slot = Instantiate(unitSlot.gameObject, parent);
             UnitIcon icon = slot.GetComponent<UnitIcon>();
+            icon.UnitSelected += () => BuyingController.SelectUnit(unit);
             icon.SetStats(unit.name, unit.icon,unit.hitPoints,unit.movement,unit.damage,unit.secondaryDamage,unit.range, unit.capacity,unit.price);
             allUnits.Add(unit,icon);
         }

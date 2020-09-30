@@ -9,12 +9,28 @@ public static class Util
 
     public static float horizontalOffset = smallRadius * 2;
     public static float sideOffset = smallRadius;
-    public static float verticalOffset = halfRadius*3;
+    public static float verticalOffset = halfRadius * 3;
 
     public static Vector3[] offsets = new Vector3[]
     {
         new Vector3(0,0,radius), new Vector3(smallRadius,0,halfRadius), new Vector3(smallRadius,0,-halfRadius),
         new Vector3(0,0,-radius), new Vector3(-smallRadius,0,-halfRadius), new Vector3(-smallRadius,0,halfRadius)
+    };
+
+    public static Vector3[] overlayOffsets = new Vector3[]
+    {
+        new Vector3(0,0,radius*0.8f), new Vector3(smallRadius*0.8f,0,halfRadius*0.8f), new Vector3(smallRadius*0.8f,0,-halfRadius*0.8f),
+        new Vector3(0,0,-radius*0.8f), new Vector3(-smallRadius*0.8f,0,-halfRadius*0.8f), new Vector3(-smallRadius*0.8f,0,halfRadius*0.8f)
+    };
+    public static Vector3[] overlayLeftCornerOffsets = new Vector3[]
+    {
+        new Vector3(0.173207f,0,.9f), new Vector3(smallRadius,0,.3f), new Vector3(.69282f,0,-.6f),
+        new Vector3(-0.173207f,0,-.9f), new Vector3(-smallRadius,0,-.3f), new Vector3(-.69282f,0,.6f)
+    };
+    public static Vector3[] overlayRightCornerOffsets = new Vector3[]
+    {
+        new Vector3(.69282f,0,.6f), new Vector3(smallRadius,0,-.3f),new Vector3(0.173207f,0,-.9f),
+        new Vector3(-.69282f,0,-.6f), new Vector3(-smallRadius,0,.3f),new Vector3(-0.173207f,0,.9f)
     };
 
     public static Dictionary<TileType, Color> color = new Dictionary<TileType, Color>
@@ -34,6 +50,34 @@ public static class Util
         new Vector2Int(0,1),new Vector2Int(1,0),new Vector2Int(0,-1),
         new Vector2Int(-1,-1),new Vector2Int(-1,0),new Vector2Int(-1,1),
     };
+
+    public static byte GetHexSides(Vector2Int coordinates, Country country)
+    {
+        bool isOdd = coordinates.y % 2 != 0;
+        byte sides = 0b0;
+        for (int i = 0; i < 6; i++)
+        {
+            int newX = coordinates.x + (isOdd ? neiughbourHexOdd[i].x : neiughbourHexEven[i].x);
+            int newY = coordinates.y + (isOdd ? neiughbourHexOdd[i].y : neiughbourHexEven[i].y);
+            if (newX >= 0 && newX < MapController.width &&
+            newY >= 0 && newY < MapController.height)
+            {
+                int newIndex = newX + newY* MapController.width;
+                if (country.hexes.Contains(newIndex))
+                {
+                    sides += (byte)(1 << i);
+                }
+            }
+        }
+
+        return sides;
+    }
+
+    public static Hex HexExist(int index)
+    {
+        Vector2Int coordinates = FindCoordinates(index);
+        return HexExist(coordinates.x,coordinates.y);
+    }
     public static Hex HexExist(int x, int y)
     {
         if (y >= 0 && y < MapController.height &&

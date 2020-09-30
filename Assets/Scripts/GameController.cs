@@ -2,19 +2,24 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class GameController
+public static class GameController
 {
+    public static List<UnitObject> redUnits = new List<UnitObject>();
+    public static List<UnitObject> blueUnits = new List<UnitObject>();
 
-    public List<UnitObject> redUnits = new List<UnitObject>();
-    public List<UnitObject> blueUnits = new List<UnitObject>();
+    public static List<CountryObject> redForts = new List<CountryObject>();
+    public static List<CountryObject> blueForts = new List<CountryObject>();
 
-    public List<FortObject> redForts = new List<FortObject>();
-    public List<FortObject> blueForts = new List<FortObject>();
+    static List<CountryObject> highlightableForts = new List<CountryObject>();
+    static List<UnitObject> highlightableUnits = new List<UnitObject>();
 
-    List<FortObject> highlightableForts = new List<FortObject>();
-    List<UnitObject> highlightableUnits = new List<UnitObject>();
-
-    public void ClearMap()
+#if UNITY_EDITOR
+    /// <summary>
+    /// for showing unit path
+    /// </summary>
+    public static UnitObject selectedUnit;
+#endif
+    public static void ClearMap()
     {
         for (int i = 0; i < redUnits.Count; i++)
         {
@@ -40,15 +45,83 @@ public class GameController
         highlightableForts.Clear();
         highlightableUnits.Clear();
 
-        CountryController.ResetController();
-        UnitController.ResetController();
+        ResetControllers();
     }
 
-    public void GetDisclosableForts(Side currentTurn)
+    public static void ResetControllers()
+    {
+        CountryController.ResetController();
+        UnitController.ResetController();
+        BuyingController.ResetController();
+    }
+
+
+    public static void HexClicked(Vector2Int offsetCoordinates, PhaseType currentPhase, Side currentTurn)
+    {
+        Hex selectedHex = Util.HexExist(offsetCoordinates.x, offsetCoordinates.y);
+        switch (currentPhase)
+        {
+            case PhaseType.InitialDisclosure:
+                if (CountryController.SelectDisclosableFort(selectedHex, currentTurn))
+                {
+                    //TODO:check can disclose
+                    CountryController.Disclose(selectedHex.fort, currentTurn);
+                    currentPhase = PhaseType.InitialBuying;
+                    //next phase
+                }
+                break;
+            case PhaseType.InitialBuying:
+                break;
+            case PhaseType.Guerilla:
+            //break;
+            case PhaseType.Combat:
+#if UNITY_EDITOR
+                if (UnitController.SelectUnit(selectedHex) && selectedHex.unit != null)
+                {
+
+                    selectedUnit = selectedHex.unit;
+
+                }
+#else
+                UnitController.SelectUnit(selectedHex);
+#endif
+                break;
+            case PhaseType.Recruitment:
+                break;
+            case PhaseType.Disclosing:
+                break;
+            case PhaseType.DisclosingBuying:
+                break;
+        }
+    }
+
+    public static void HexDeselected(PhaseType currentPhase)
+    {
+        switch (currentPhase)
+        {
+            case PhaseType.InitialDisclosure:
+                break;
+            case PhaseType.InitialBuying:
+                break;
+            case PhaseType.Guerilla:
+            //break;
+            case PhaseType.Combat:
+                UnitController.DeselectUnit();
+                break;
+            case PhaseType.Recruitment:
+                break;
+            case PhaseType.Disclosing:
+                break;
+            case PhaseType.DisclosingBuying:
+                break;
+        }
+    }
+
+    public static void GetDisclosableForts(Side currentTurn)
     {
         highlightableForts.Clear();
-        List<FortObject> sideForts = currentTurn == Side.Blue ? blueForts : redForts;
-
+        List<CountryObject> sideForts = currentTurn == Side.Blue ? blueForts : redForts;
+        
         foreach (var fort in sideForts)
         {
             if (!fort.isDisclosed)
@@ -58,7 +131,7 @@ public class GameController
         }
     }
 
-    public void GetClickableUnits(Side currentTurn)
+    public static void GetClickableUnits(Side currentTurn)
     {
         highlightableUnits.Clear();
         List<UnitObject> sideUnits = currentTurn == Side.Blue ? blueUnits : redUnits;
@@ -71,4 +144,6 @@ public class GameController
             }
         }
     }
+
+
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public static class MapCreator
 {
-    public static List<FortObject> blueForts = new List<FortObject>();
-    public static List<FortObject> redForts = new List<FortObject>();
+    public static List<CountryObject> blueForts = new List<CountryObject>();
+    public static List<CountryObject> redForts = new List<CountryObject>();
     public static string[] sideToName = new string[]
     {
         "RedFort","BlueFort","NeutralFort"
@@ -34,10 +34,10 @@ public static class MapCreator
         }
     }
 
-    static FortObject CreateFort(Country country,Side side)
+    static CountryObject CreateFort(Country country,Side side)
     {
         GameObject newFort = new GameObject(sideToName[(int) side]);
-        FortObject fortObject = newFort.AddComponent<FortObject>();
+        CountryObject fortObject = newFort.AddComponent<CountryObject>();
         fortObject.InitializeFort(country, side);
             
         Vector2Int coordinates = Util.FindCoordinates(country.fort);
@@ -50,7 +50,7 @@ public static class MapCreator
         return fortObject;
     }
 
-    static void ColorFort(Country country, FortObject fort, Side side)
+    static void ColorFort(Country country, CountryObject fort, Side side)
     {
         for(int i=0;i<country.hexes.Count;i++)
         {

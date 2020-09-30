@@ -23,6 +23,7 @@ public class UnitObject : MonoBehaviour
     public Unit type;
 
     public Dictionary<Hex, HexPath> movableHexes;
+    public HashSet<Hex> attackableHexes;
 
     public float animationSpeed = 10;
 
@@ -35,7 +36,8 @@ public class UnitObject : MonoBehaviour
     public void Initialize(Unit unit, Vector2Int coordinates)
     {
         movableHexes = new Dictionary<Hex, HexPath>();
-        
+        attackableHexes = new HashSet<Hex>();
+
         type = unit;
         hitPoints = unit.hitPoints;
         if (unit.capacity > 0)
@@ -66,6 +68,7 @@ public class UnitObject : MonoBehaviour
         hasAttacked = false;
         hasSecondaryAttacked = false;
         movableHexes.Clear();
+        attackableHexes.Clear();
     }
     
     public void TakeDamage(int damage)
@@ -84,8 +87,10 @@ public class UnitObject : MonoBehaviour
     {
         Destroy(gameObject);
     }
-    public void Attack(bool isPrimaryAttack = true)
+    public void Attack(UnitObject attackee,bool isPrimaryAttack = true)
     {
+        attackee.TakeDamage(isPrimaryAttack ? type.damage : type.secondaryDamage);
+
         if (isPrimaryAttack)
         { 
             hasAttacked = true;

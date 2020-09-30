@@ -14,6 +14,7 @@ public static class BuyingController
 
     public static UnitObject BuyUnit(Hex hex, Side side, int treasury)
     {
+        //TODO:add check viable hex
         if (hex.unit == null && hex.fort == null && selectedBuyingUnit != null && selectedBuyingUnit.price <= treasury)
         {
 
@@ -21,16 +22,21 @@ public static class BuyingController
             newUnit.side = side;
             if (side == Side.Blue)
             {
-                gameController.blueUnits.Add(newUnit);
+                GameController.blueUnits.Add(newUnit);
             }
             else
             {
-                gameController.redUnits.Add(newUnit);
+                GameController.redUnits.Add(newUnit);
             }
         
             return newUnit;
         }
 
         return null;
+    }
+
+    public static void SelectUnit(Unit unit)
+    {
+        selectedBuyingUnit = unit;
     }
 }

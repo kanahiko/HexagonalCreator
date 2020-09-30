@@ -12,6 +12,10 @@ public class HexCreator : MonoBehaviour
     public MeshCollider collider;
     public GameObject highlight;
     Mesh mesh;
+
+    public MeshFilter countryMeshFilter;
+    Mesh countryMesh;
+
     void Start()
     {
         //CreateMap(width, height);
@@ -60,6 +64,8 @@ public class HexCreator : MonoBehaviour
         mesh.SetColors(colors);
         meshFilter.sharedMesh = mesh;
         collider.sharedMesh = mesh;
+
+        CreateCountriesOverlay(map);
 
         return hexes;
         Debug.Log(vertices.Count);
@@ -132,6 +138,147 @@ public class HexCreator : MonoBehaviour
             else
             {
                 triangles.Add(vertexIndex[i + 2]);
+            }
+        }
+    }
+
+    void CreateCountriesOverlay(MapData data)
+    {
+        if (countryMesh == null)
+        {
+            countryMesh = new Mesh();
+        }
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Color> color = new List<Color>();
+        List<Vector2> uvs = new List<Vector2>();
+        Dictionary<string, int> vertexes = new Dictionary<string, int>();
+        for(int i=0;i<data.countries.Count;i++)
+        {
+            CreateCountryOverlay(data.countries[i], ref vertexes, ref vertices, ref triangles, ref uvs, ref color, new Vector2(Mathf.Pow(2,i),i));
+        }
+
+        countryMesh.SetVertices(vertices);
+        countryMesh.SetTriangles(triangles, 0);
+        countryMesh.RecalculateNormals();
+        countryMesh.SetUVs(0, uvs);
+        countryMesh.SetColors(color);
+        countryMeshFilter.sharedMesh = countryMesh;
+    }
+
+    void CreateCountryOverlay(Country country, ref Dictionary<string, int> vertexes, ref List<Vector3> vertices, ref List<int> triangles, ref List<Vector2> uvs, ref List<Color> color, Vector2 index)
+    {
+        foreach(var hex in country.hexes)
+        {
+            Vector2Int coordinates = Util.FindCoordinates(hex);
+            byte sides = Util.GetHexSides(coordinates, country);
+            Vector3 offset = new Vector3(Util.horizontalOffset * coordinates.x, 0, Util.verticalOffset * coordinates.y);
+            if (coordinates.y != 0)
+            {
+                offset.x += coordinates.y % 2 * Util.sideOffset;
+            }
+
+            //Debug.Log(hex);
+            //Debug.Log(hex);
+            CreateOvelayHex(ref vertices, ref triangles, ref uvs,ref color, offset, 0.1f, sides, index);
+        }
+    }
+
+
+    void CreateOvelayHex(ref List<Vector3> vertices, ref List<int> triangles, ref List<Vector2> uvs,ref List<Color> color, Vector3 offset, float elevation, byte sides, Vector2 index)
+    {
+        Vector3 elevationVector = new Vector3(0, elevation, 0);
+        vertices.Add(Vector3.zero + offset + elevationVector);
+        uvs.Add(index);
+        color.Add(new Color(0.2f, 0.2f, 0.2f));
+        int zeroVertexIndex = vertices.Count - 1;
+
+        for (int i = 0; i < 6; i++)
+        {
+            vertices.Add(Util.overlayOffsets[i] + offset + elevationVector);
+            if (i + 1 >= 6)
+            {
+                vertices.Add(Util.overlayOffsets[0] + offset + elevationVector);
+            }
+            else
+            {
+                vertices.Add(Util.overlayOffsets[i+1] + offset + elevationVector);
+            }
+            uvs.Add(index);
+            uvs.Add(index);
+            triangles.Add(zeroVertexIndex);
+            triangles.Add(vertices.Count-2);
+            triangles.Add(vertices.Count-1);
+
+            int vertexIndex = vertices.Count - 2;
+
+            if (((sides >> i) & 1) == 1)
+            {
+
+                bool hasLeftSide = false;
+                if (i == 0)
+                {
+                    hasLeftSide = ((sides >> 5) & 1) == 1;
+                }
+                else
+                {
+                    hasLeftSide = ((sides >> (i - 1)) & 1) == 1;
+                }
+                bool hasRightSide = false;
+                if (i == 5)
+                {
+                    hasRightSide = (sides & 1) == 1;
+                }
+                else
+                {
+                    hasRightSide = ((sides >> (i + 1)) & 1) == 1;
+                }
+
+                if (hasLeftSide)
+                {
+                    vertices.Add(Util.offsets[i] + offset + elevationVector);
+                    color.Add(new Color(0.2f, 0.2f, 0.2f));
+                    color.Add(new Color(0.2f, 0.2f, 0.2f));
+                }
+                else
+                {
+                    vertices.Add(Util.overlayLeftCornerOffsets[i] + offset + elevationVector);
+                    color.Add(new Color(1f, 0.2f, 0.2f));
+                    color.Add(new Color(1f, 1f, 1f));
+                }
+                if (hasRightSide)
+                {
+                    if (i + 1 >= 6)
+                    {
+                        vertices.Add(Util.offsets[0] + offset + elevationVector);
+                    }
+                    else
+                    {
+                        vertices.Add(Util.offsets[i + 1] + offset + elevationVector);
+                    }
+                    color.Insert(color.Count - 2, new Color(0.2f, 0.2f, 0.2f));
+                    color.Add(new Color(0.2f, 0.2f, 0.2f));
+                }
+                else
+                {
+                    vertices.Add(Util.overlayRightCornerOffsets[i] + offset + elevationVector);
+                    color.Insert(color.Count - 2, new Color(1f, 0.2f, 0.2f));
+                    color.Add(new Color(1f, 1f, 1f));
+                }
+                uvs.Add(index);
+                uvs.Add(index);
+                triangles.Add(vertexIndex);
+                triangles.Add(vertices.Count - 2);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertexIndex + 1);
+                triangles.Add(vertices.Count - 2);
+                triangles.Add(vertices.Count - 1);
+
+            }
+            else 
+            {
+                color.Add(new Color(1f, 1f, 1f));
+                color.Add(new Color(1f, 1f, 1f));
             }
         }
     }

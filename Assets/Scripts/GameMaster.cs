@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class GameMaster : MonoBehaviour
 {
-    public GameController gameController;
     public Controller controller;
     public MapController mapController;
 
@@ -16,30 +15,20 @@ public class GameMaster : MonoBehaviour
     bool doGuerilla;
 
 
-#if UNITY_EDITOR
-    /// <summary>
-    /// for showing unit path
-    /// </summary>
-    private UnitObject selectedUnit;
-#endif
     public void Start()
     {
         BuyingController.master = this;
-        controller.hexClicked = HexClicked;
-        controller.hexDeselected = HexDeselected;
+        controller.hexClicked = a => GameController.HexClicked(a,currentPhase,currentTurn);
+        controller.hexDeselected = () => GameController.HexDeselected(currentPhase);
         StartGame(mapController.currentMapTest);
     }
     public void StartGame(MapData map)
     {
         mapController.CreateMap(map);
 
-        if (gameController == null)
-        {
-            gameController = new GameController();
-        }
-        gameController.ClearMap();
-        gameController.redForts = MapCreator.redForts;
-        gameController.blueForts = MapCreator.blueForts;
+        GameController.ClearMap();
+        GameController.redForts = MapCreator.redForts;
+        GameController.blueForts = MapCreator.blueForts;
         currentTurn = Side.Blue;
         currentPhase = PhaseType.InitialDisclosure;
 
@@ -72,9 +61,7 @@ public class GameMaster : MonoBehaviour
             currentTurn = Side.Blue;
             currentTurn++;
         }
-        CountryController.AddMoney(currentTurn);
     }
-
 
     public void ChangePhase()
     {
@@ -93,6 +80,7 @@ public class GameMaster : MonoBehaviour
                 currentPhase = PhaseType.Recruitment;
                 break;
             case PhaseType.Recruitment:
+                CountryController.AddMoney(currentTurn);
                 currentPhase = PhaseType.Disclosing;
                 break;
             case PhaseType.Disclosing:
@@ -103,82 +91,24 @@ public class GameMaster : MonoBehaviour
                 ChangeTurn();
                 break;
         }
+
+        GameController.ResetControllers();
     }
 
-    public void HexClicked(Vector2Int offsetCoordinates)
-    {
-        Hex selectedHex = Util.HexExist(offsetCoordinates.x, offsetCoordinates.y);
-        switch (currentPhase)
+    #if UNITY_EDITOR
+        private void OnDrawGizmos()
         {
-            case PhaseType.InitialDisclosure:
-                if (CountryController.SelectDisclosableFort(selectedHex, currentTurn))
-                {
-                    //TODO:check can disclose
-                    CountryController.Disclose(selectedHex.fort, currentTurn);
-                    currentPhase = PhaseType.InitialBuying;
-                    //next phase
-                }
-                break;
-            case PhaseType.InitialBuying:
-                break;
-            case PhaseType.Guerilla:
-                //break;
-            case PhaseType.Combat:
-#if UNITY_EDITOR
-                if (UnitController.SelectUnit(selectedHex) && selectedHex.unit != null)
-                {
-
-                    selectedUnit = selectedHex.unit;
-
-                }
-#else
-                UnitController.SelectUnit(selectedHex);
-#endif
-                break;
-            case PhaseType.Recruitment:
-                break;
-            case PhaseType.Disclosing:
-                break;
-            case PhaseType.DisclosingBuying:
-                break;
-        }
-    }
-
-    public void HexDeselected()
-    {
-        switch (currentPhase)
-        {
-            case PhaseType.InitialDisclosure:
-                break;
-            case PhaseType.InitialBuying:
-                break;
-            case PhaseType.Guerilla:
-            //break;
-            case PhaseType.Combat:
-                UnitController.DeselectUnit();
-                break;
-            case PhaseType.Recruitment:
-                break;
-            case PhaseType.Disclosing:
-                break;
-            case PhaseType.DisclosingBuying:
-                break;
-        }
-    }
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (selectedUnit != null)
-        {
-            Gizmos.DrawSphere(selectedUnit.hex.position,0.2f);
-
-            foreach (var hex in selectedUnit.movableHexes)
+            if (GameController.selectedUnit != null)
             {
-                Gizmos.color = Color.Lerp(Color.green, Color.red, (hex.Value.distance / (float) selectedUnit.moves));
-                Gizmos.DrawSphere(hex.Key.position,0.1f);
-                Gizmos.DrawLine(hex.Key.position,hex.Value.from.position);
+                Gizmos.DrawSphere(GameController.selectedUnit.hex.position, 0.2f);
+
+                foreach (var hex in GameController.selectedUnit.movableHexes)
+                {
+                    Gizmos.color = Color.Lerp(Color.green, Color.red, (hex.Value.distance / (float)GameController.selectedUnit.moves));
+                    Gizmos.DrawSphere(hex.Key.position, 0.1f);
+                    Gizmos.DrawLine(hex.Key.position, hex.Value.from.position);
+                }
             }
         }
-    }
-#endif
+    #endif
 }

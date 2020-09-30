@@ -24,35 +24,33 @@ public static class UnitController
             }
             else
             {
-                if (selectedUnit.atta)
+                //check if hex is in the attack range
+                if (selectedUnit.attackableHexes.Contains(hex))
+                {
+                    selectedUnit.Attack(hex.unit);
+                    //attack
+                }
             }
         }
         
         selectedUnit = hex.unit;
         ShowTransportButtons?.Invoke(selectedUnit);
-        selectedUnit.movableHexes = PathFinding.GetMovableHexes(hex, selectedUnit.moves,selectedUnit.capacity, selectedUnit.type);
+        selectedUnit.movableHexes = PathFinding.GetMovableHexes(hex, selectedUnit.moves, selectedUnit.type);
+        PathFinding.GetAttackableHexes(selectedUnit);
         return true;
     }
+
 
     public static void DeselectUnit()
     {
         if (selectedUnit != null)
         {
             selectedUnit.movableHexes.Clear();
+            selectedUnit.attackableHexes.Clear();
             selectedUnit = null;
             ShowTransportButtons?.Invoke(null);
             PathFinding.ClearPaths();
         }
-    }
-
-    public static void Attack()
-    {
-
-    }
-
-    public static void SelectFort()
-    {
-
     }
     public static void SelectUnit(int index)
     {
@@ -68,7 +66,7 @@ public static class UnitController
         }
         Hex hex = selectedUnit.hex;
         ShowTransportButtons?.Invoke(selectedUnit);
-        selectedUnit.movableHexes = PathFinding.GetMovableHexes(hex, selectedUnit.moves, selectedUnit.capacity, selectedUnit.type);
+        selectedUnit.movableHexes = PathFinding.GetMovableHexes(hex, selectedUnit.moves, selectedUnit.type);
     }
 
     public static void MoveUnit(Hex moveToHex)

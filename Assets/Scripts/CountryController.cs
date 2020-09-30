@@ -5,11 +5,11 @@ using UnityEngine;
 
 public static class CountryController
 {
-    public static FortObject selectedFort;
+    public static CountryObject selectedFort;
 
     public static void AddMoney(Side side)
     {
-        List<FortObject> sideForts = side == Side.Blue ? gameController.blueForts : gameController.redForts;
+        List<CountryObject> sideForts = side == Side.Blue ? GameController.blueForts : GameController.redForts;
 
         foreach (var fort in sideForts)
         {
@@ -31,7 +31,7 @@ public static class CountryController
     }
 
 
-    public static void Disclose(FortObject fort, Side side)
+    public static void Disclose(CountryObject fort, Side side)
     {
         fort.side = side;
         //TODO:color differenctly
