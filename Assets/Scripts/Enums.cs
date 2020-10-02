@@ -13,7 +13,7 @@ public enum Direction
 
 public enum Side
 {
-    Red = 1, Blue = 0, None = 2
+    Blue = 0, Red = 1, None = 2
 }
 [Flags]
 public enum UnitType

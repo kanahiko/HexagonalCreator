@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CountryObject : MonoBehaviour
 {
+    public int id;
     public int treasury;
     
     public Hex fortHex;
@@ -14,8 +15,9 @@ public class CountryObject : MonoBehaviour
     public Side side;
     public Side initialSide;
 
+    public bool canGetMoney = true;
     public int revenueTurnsLeft;
-    public bool isDisclosed = false;
+    public bool hadDisclosedMoney = false;
     public bool hadGuerrilla = false;
     public bool hadIndemnity = false;
 
@@ -23,10 +25,10 @@ public class CountryObject : MonoBehaviour
     public GameObject fortModel;
     public UnitObject[] planes;
 
-    public void InitializeFort(Country country, Side side)
+    public void InitializeFort(Country country, Side side, int id)
     {
         fort = MapController.fortTypes[(int)country.type];
-
+        hexes = new Hex[country.hexes.Count];
         revenueTurnsLeft = fort.revenueTurns;
         capacity = fort.capacity;
         planes = new UnitObject[capacity];
@@ -35,6 +37,8 @@ public class CountryObject : MonoBehaviour
 
         fortModel = Instantiate(fort.model, transform);
         fortModel.transform.localPosition = Vector3.zero;
+        canGetMoney = true;
+        this.id = id;
     }
 
     public void Destruct()
@@ -47,8 +51,11 @@ public class CountryObject : MonoBehaviour
     {
         for (int i = 0; i < planes.Length; i++)
         {
-            planes[i].Destruct();
-            planes[i] = null;
+            if (planes[i] != null)
+            {
+                planes[i].Destruct();
+                planes[i] = null;
+            }
         }
         capacity = 0;
     }

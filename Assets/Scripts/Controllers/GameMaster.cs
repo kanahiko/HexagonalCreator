@@ -17,21 +17,20 @@ public class GameMaster : MonoBehaviour
 
     public void Start()
     {
+        GameController.mapController = mapController;
         BuyingController.master = this;
+        GameController.GoNextPhase = ChangePhase;
         controller.hexClicked = a => GameController.HexClicked(a,currentPhase,currentTurn);
         controller.hexDeselected = () => GameController.HexDeselected(currentPhase);
         StartGame(mapController.currentMapTest);
     }
     public void StartGame(MapData map)
     {
-        mapController.CreateMap(map);
-
         GameController.ClearMap();
-        GameController.redForts = MapCreator.redForts;
-        GameController.blueForts = MapCreator.blueForts;
+        mapController.CreateMap(map);
         currentTurn = Side.Blue;
         currentPhase = PhaseType.InitialDisclosure;
-
+        SetupForPhase();
         //tests
         /*AddUnit(MapController.unitTypes[1], new Vector2Int(4,3));
         Vector2Int coords = new Vector2Int(2,3);
@@ -55,6 +54,7 @@ public class GameMaster : MonoBehaviour
                 currentPhase = doGuerilla ? PhaseType.Guerilla : PhaseType.Combat;
                 doGuerilla = false;
             }
+            SetupForPhase();
         }
         else
         {
@@ -65,6 +65,7 @@ public class GameMaster : MonoBehaviour
 
     public void ChangePhase()
     {
+        DesetupForPhase();
         switch (currentPhase)
         {
             case PhaseType.InitialDisclosure:
@@ -91,8 +92,57 @@ public class GameMaster : MonoBehaviour
                 ChangeTurn();
                 break;
         }
-
+        SetupForPhase();
         GameController.ResetControllers();
+    }
+    void SetupForPhase()
+    {
+        switch (currentPhase)
+        {
+            case PhaseType.InitialDisclosure:
+                mapController.SetupForDisclosure(currentTurn);
+                break;
+            case PhaseType.InitialBuying:
+                mapController.SetupForBuying(currentTurn, true);
+                break;
+            case PhaseType.Guerilla:
+                break;
+            case PhaseType.Combat:
+                break;
+            case PhaseType.Recruitment:
+                break;
+            case PhaseType.Disclosing:
+                mapController.SetupForDisclosure(currentTurn);
+                break;
+            case PhaseType.DisclosingBuying:
+                mapController.SetupForBuying(currentTurn, false);
+                break;
+        }
+    }
+
+    void DesetupForPhase()
+    {
+        switch (currentPhase)
+        {
+            case PhaseType.InitialDisclosure:
+                mapController.DesetupForDisclosure();
+                break;
+            case PhaseType.InitialBuying:
+                mapController.DesetupForBuying(true);
+                break;
+            case PhaseType.Guerilla:
+                break;
+            case PhaseType.Combat:
+                break;
+            case PhaseType.Recruitment:
+                break;
+            case PhaseType.Disclosing:
+                mapController.DesetupForDisclosure();
+                break;
+            case PhaseType.DisclosingBuying:
+                mapController.DesetupForBuying(false);
+                break;
+        }
     }
 
     #if UNITY_EDITOR

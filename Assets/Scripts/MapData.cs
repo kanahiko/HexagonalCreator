@@ -37,13 +37,34 @@ public class Hex
     public UnitObject unit;
     public CountryObject fort;
 
-    public Hex(int x,  int y, TileType type, int elevation)
+    public SpriteRenderer hexHighlight;
+
+    public Hex(int x,  int y, TileType type, int elevation, SpriteRenderer highlight)
     {
         this.x = x;
         this.y = y;
         //coordinates = new Vector3Int(x, y, z);
         this.type = type;
         this.elevation = elevation;
+        hexHighlight = highlight;
+        hexHighlight.enabled = false;
+    }
+
+    public void HightLight(bool hightlight)
+    {
+        HightLight(hightlight, Color.white);
+    }
+    public void HightLight(bool hightlight, Color color)
+    {
+        if (hightlight)
+        {
+            hexHighlight.color = color;
+            hexHighlight.enabled = true;
+        }
+        else
+        {
+            hexHighlight.enabled = false;
+        }
     }
 }
 

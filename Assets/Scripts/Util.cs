@@ -17,34 +17,78 @@ public static class Util
         new Vector3(0,0,-radius), new Vector3(-smallRadius,0,-halfRadius), new Vector3(-smallRadius,0,halfRadius)
     };
 
+    /// <summary>
+    /// Inner border for overlay
+    /// </summary>
     public static Vector3[] overlayOffsets = new Vector3[]
     {
         new Vector3(0,0,radius*0.8f), new Vector3(smallRadius*0.8f,0,halfRadius*0.8f), new Vector3(smallRadius*0.8f,0,-halfRadius*0.8f),
         new Vector3(0,0,-radius*0.8f), new Vector3(-smallRadius*0.8f,0,-halfRadius*0.8f), new Vector3(-smallRadius*0.8f,0,halfRadius*0.8f)
     };
+    /// <summary>
+    /// Inner left(realtive to hex section) border for overlay
+    /// </summary>
     public static Vector3[] overlayLeftCornerOffsets = new Vector3[]
     {
-        new Vector3(0.173207f,0,.9f), new Vector3(smallRadius,0,.3f), new Vector3(.69282f,0,-.6f),
-        new Vector3(-0.173207f,0,-.9f), new Vector3(-smallRadius,0,-.3f), new Vector3(-.69282f,0,.6f)
+        new Vector3(0.173207f,0,.9f), new Vector3(smallRadius,0,.3f), new Vector3(smallRadius*0.8f,0,-.6f),
+        new Vector3(-0.173207f,0,-.9f), new Vector3(-smallRadius,0,-.3f), new Vector3(-smallRadius*0.8f,0,.6f)
     };
+    /// <summary>
+    /// Inner right(realtive to hex section) border for overlay
+    /// </summary>
     public static Vector3[] overlayRightCornerOffsets = new Vector3[]
     {
-        new Vector3(.69282f,0,.6f), new Vector3(smallRadius,0,-.3f),new Vector3(0.173207f,0,-.9f),
-        new Vector3(-.69282f,0,-.6f), new Vector3(-smallRadius,0,.3f),new Vector3(-0.173207f,0,.9f)
+        new Vector3(smallRadius*0.8f,0,.6f), new Vector3(smallRadius,0,-.3f),new Vector3(0.173207f,0,-.9f),
+        new Vector3(-smallRadius*0.8f,0,-.6f), new Vector3(-smallRadius,0,.3f),new Vector3(-0.173207f,0,.9f)
     };
 
+
+    /// <summary>
+    /// Outer border for overlay
+    /// </summary>
+    public static Vector3[] overlayOuterOffsets = new Vector3[]
+    {
+        new Vector3(0,0,radius*0.9f), new Vector3(smallRadius*0.9f,0,halfRadius*0.9f), new Vector3(smallRadius*0.9f,0,-halfRadius*0.9f),
+        new Vector3(0,0,-radius*0.9f), new Vector3(-smallRadius*0.9f,0,-halfRadius*0.9f), new Vector3(-smallRadius*0.9f,0,halfRadius*0.9f)
+    };
+    /// <summary>
+    /// Outer left(realtive to hex section) border for overlay
+    /// </summary>
+    public static Vector3[] overlayOuterLeftCornerOffsets = new Vector3[]
+    {
+        new Vector3(0.086605f,0,.95f), new Vector3(smallRadius,0,.4f), new Vector3(smallRadius*0.9f,0,-.55f),
+        new Vector3(-0.086605f,0,-.95f), new Vector3(-smallRadius,0,-.4f), new Vector3(-smallRadius*0.9f,0,.55f)
+    };
+    /// <summary>
+    /// Outer right(realtive to hex section) border for overlay
+    /// </summary>
+    public static Vector3[] overlayOuterRightCornerOffsets = new Vector3[]
+    {
+        new Vector3(smallRadius*0.9f,0,.55f), new Vector3(smallRadius,0,-.4f),new Vector3(0.086605f,0,-.95f),
+        new Vector3(-smallRadius*0.9f,0,-.55f), new Vector3(-smallRadius,0,.4f),new Vector3(-0.086605f,0,.95f)
+    };
+
+    /// <summary>
+    /// Tile type to color
+    /// </summary>
     public static Dictionary<TileType, Color> color = new Dictionary<TileType, Color>
     {
         {TileType.Water, Color.blue },{TileType.River, Color.cyan },{TileType.Sand, Color.yellow },{TileType.Land, Color.green },{TileType.Forest, Color.magenta },
         {TileType.Road, Color.gray },{TileType.Mountain, Color.white },{TileType.Impassible, Color.black }
     };
 
+    /// <summary>
+    /// Index delta to get neighbour when row is odd
+    /// </summary>
     public static List<Vector2Int> neiughbourHexOdd = new List<Vector2Int>
     {
         new Vector2Int(1,1),new Vector2Int(1,0),new Vector2Int(1,-1),
         new Vector2Int(0,-1),new Vector2Int(-1,0),new Vector2Int(0,1),
     };
 
+    /// <summary>
+    /// Index delta to get neighbour when row is even
+    /// </summary>
     public static List<Vector2Int> neiughbourHexEven = new List<Vector2Int>
     {
         new Vector2Int(0,1),new Vector2Int(1,0),new Vector2Int(0,-1),
@@ -78,6 +122,7 @@ public static class Util
         Vector2Int coordinates = FindCoordinates(index);
         return HexExist(coordinates.x,coordinates.y);
     }
+
     public static Hex HexExist(int x, int y)
     {
         if (y >= 0 && y < MapController.height &&
@@ -108,16 +153,19 @@ public static class Util
     {
         return Mathf.Max(Mathf.Abs(pointA.x - pointB.x), Mathf.Abs(pointA.y - pointB.y), Mathf.Abs(pointA.z - pointB.z));
     }
+
     public static int GetDistance(Vector2Int pointA, Vector2Int pointB)
     {
         return GetDistance(pointA.x, pointA.y, pointB.x, pointB.y);
     }
+
     public static int GetDistance(int pointAX, int pointAY, int pointBX, int pointBY)
     {
         Vector3Int cubePointA = Util.OffsetToCube(pointAX, pointAY);
         Vector3Int cubePointB = Util.OffsetToCube(pointBX, pointBY);
         return GetDistance(cubePointA, cubePointB);
     }
+
     public static Vector2Int GetPositionToCoordinates(Vector3 position)
     {
         float x = position.x / (smallRadius * 2f);

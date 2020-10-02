@@ -1,18 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public static class GameController
 {
     public static List<UnitObject> redUnits = new List<UnitObject>();
     public static List<UnitObject> blueUnits = new List<UnitObject>();
 
-    public static List<CountryObject> redForts = new List<CountryObject>();
-    public static List<CountryObject> blueForts = new List<CountryObject>();
+    public static List<CountryObject> redCountries = new List<CountryObject>();
+    public static List<CountryObject> blueCountries = new List<CountryObject>();
 
-    static List<CountryObject> highlightableForts = new List<CountryObject>();
-    static List<UnitObject> highlightableUnits = new List<UnitObject>();
+    static HashSet<CountryObject> highlightableForts = new HashSet<CountryObject>();
+    static HashSet<UnitObject> highlightableUnits = new HashSet<UnitObject>();
 
+    public static MapController mapController;
+    public static Action GoNextPhase;
 #if UNITY_EDITOR
     /// <summary>
     /// for showing unit path
@@ -31,13 +34,13 @@ public static class GameController
         }
 
 
-        for (int i = 0; i < redForts.Count; i++)
+        for (int i = 0; i < redCountries.Count; i++)
         {
-            redForts[i].Destruct();
+            redCountries[i].Destruct();
         }
-        for (int i = 0; i < blueForts.Count; i++)
+        for (int i = 0; i < blueCountries.Count; i++)
         {
-            blueForts[i].Destruct();
+            blueCountries[i].Destruct();
         }
 
         redUnits.Clear();
@@ -53,6 +56,7 @@ public static class GameController
         CountryController.ResetController();
         UnitController.ResetController();
         BuyingController.ResetController();
+        mapController.ResetController();
     }
 
 
@@ -62,11 +66,11 @@ public static class GameController
         switch (currentPhase)
         {
             case PhaseType.InitialDisclosure:
-                if (CountryController.SelectDisclosableFort(selectedHex, currentTurn))
+                if (CountryController.SelectedDisclosableFort(selectedHex, currentTurn, highlightableForts))
                 {
-                    //TODO:check can disclose
+                    //TODO:check want disclose
                     CountryController.Disclose(selectedHex.fort, currentTurn);
-                    currentPhase = PhaseType.InitialBuying;
+                    GoNextPhase?.Invoke();
                     //next phase
                 }
                 break;
@@ -117,18 +121,21 @@ public static class GameController
         }
     }
 
-    public static void GetDisclosableForts(Side currentTurn)
+    public static int GetDisclosableCountry(Side currentTurn)
     {
         highlightableForts.Clear();
-        List<CountryObject> sideForts = currentTurn == Side.Blue ? blueForts : redForts;
-        
-        foreach (var fort in sideForts)
+        List<CountryObject> sideCountries = currentTurn == Side.Blue ? blueCountries : redCountries;
+        int countriesMask = 0;
+        foreach (var country in sideCountries)
         {
-            if (!fort.isDisclosed)
+            if (country.initialSide == currentTurn && country.side == Side.None)
             {
-                highlightableForts.Add(fort);
+                highlightableForts.Add(country);
+                countriesMask += 1 << country.id;
             }
         }
+
+        return countriesMask;
     }
 
     public static void GetClickableUnits(Side currentTurn)
